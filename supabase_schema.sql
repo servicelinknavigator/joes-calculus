@@ -1,4 +1,4 @@
--- Joes Calculus App — Supabase schema (v1.0)
+-- Joes Calculus App | Supabase schema (v1.0)
 -- Voer dit uit in de Supabase SQL editor van een nieuw (of bestaand) project.
 
 -- ── profiles ─────────────────────────────────────────────────────────────────

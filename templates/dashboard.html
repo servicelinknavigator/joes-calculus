@@ -6,21 +6,34 @@
 
 {% for m in modules %}
 <section class="module-block">
-  <h2>{{ m.order_index }}. {{ m.title }}</h2>
+  <div class="module-block-header">
+    <h2>{{ m.order_index }}. {{ m.title }}</h2>
+    {% if m.total_count %}
+    <span class="module-block-count">{{ m.completed_count }}/{{ m.total_count }} afgerond</span>
+    {% else %}
+    <span class="module-block-count">Binnenkort beschikbaar</span>
+    {% endif %}
+  </div>
+  {% if m.total_count %}
+  <div class="module-progress-bar"><div class="module-progress-fill" style="width:{{ m.pct }}%"></div></div>
+  {% endif %}
+
   <div class="chapter-grid">
     {% for c in m.chapters %}
-    {% set st = progress.get(c.id, 'not_started') %}
     <a href="{{ url_for('chapter_view', chapter_number=c.chapter_number) }}"
-       class="chapter-card {{ 'is-placeholder' if c.is_placeholder else '' }} status-{{ st }}">
-      <div class="chapter-card-num">Hoofdstuk {{ c.chapter_number }}</div>
-      <div class="chapter-card-title">{{ c.title }}</div>
-      <div class="chapter-card-status">
-        {% if c.is_placeholder %}Binnenkort beschikbaar
-        {% elif st == 'completed' %}✓ Afgerond
-        {% elif st == 'in_progress' %}• Bezig
-        {% else %}Nog niet gestart
+       class="chapter-btn {{ 'is-placeholder' if c.is_placeholder else '' }} status-{{ c.status }}">
+      <div class="chapter-btn-top">
+        <span class="chapter-btn-num">H{{ c.chapter_number }}</span>
+        {% if c.is_placeholder %}
+          <span class="chapter-btn-tag">Binnenkort</span>
+        {% elif c.status == 'completed' %}
+          <span class="chapter-btn-tag done">✓ Afgerond</span>
+        {% elif c.status == 'in_progress' %}
+          <span class="chapter-btn-tag active">Bezig</span>
         {% endif %}
       </div>
+      <div class="chapter-btn-title">{{ c.title }}</div>
+      <div class="chapter-btn-bar"><div class="chapter-btn-bar-fill" style="width:{{ c.status_pct }}%"></div></div>
     </a>
     {% endfor %}
   </div>

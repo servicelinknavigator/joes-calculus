@@ -1,10 +1,10 @@
 # Build prompt: Calculus-app voor Joes (v1.0)
 
-Dit document is de volledige spec/prompt om app 1.0 te bouwen. Alles wat hieronder staat is besproken en bevestigd met de opdrachtgever (Anna) in de aanloop naar dit document. Bouw hierop verder in `C:\Users\annak\Joes` — niet in andere repo's.
+Dit document is de volledige spec/prompt om app 1.0 te bouwen. Alles wat hieronder staat is besproken en bevestigd met de opdrachtgever (Anna) in de aanloop naar dit document. Bouw hierop verder in `C:\Users\annak\Joes`, niet in andere repo's.
 
 ## 1. Context en doel
 
-Joes heeft het niveau bovenbouw VWO wiskunde B al volledig onder de knie en wil zich nu verder ontwikkelen richting calculus, op een niveau dat aansluit bij een eerstejaars universitair wiskundepakket. Hij heeft deze stof **nog nooit gehad** — dit is voor hem compleet nieuwe leerstof, geen herhaling.
+Joes heeft het niveau bovenbouw VWO wiskunde B al volledig onder de knie en wil zich nu verder ontwikkelen richting calculus, op een niveau dat aansluit bij een eerstejaars universitair wiskundepakket. Hij heeft deze stof **nog nooit gehad**: dit is voor hem compleet nieuwe leerstof, geen herhaling.
 
 De app is een persoonlijk leertraject: geen generieke oefentool, maar een doorlopend "boek" met hoofdstukken dat Joes op zijn eigen tempo doorwerkt.
 
@@ -26,7 +26,7 @@ De app moet aanvoelen als een boek met hoofdstukken:
 
 - Een duidelijke, doorlopend genummerde hoofdstukkenlijst (inhoudsopgave/TOC), zichtbaar als sidebar of startpagina.
 - **Vrije navigatie:** Joes moet op elk moment naar elk hoofdstuk kunnen springen (bijv. direct naar hoofdstuk 4), ook als hij voorgaande hoofdstukken niet heeft afgerond. Geen verplichte lineaire lock-in.
-- Voortgang per hoofdstuk wordt wel bijgehouden en getoond (bijv. "niet gestart / bezig / afgerond"), puur informatief — niet blokkerend.
+- Voortgang per hoofdstuk wordt wel bijgehouden en getoond (bijv. "niet gestart / bezig / afgerond"), puur informatief, niet blokkerend.
 - Elk hoofdstuk heeft een vaste opbouw: uitleg → opgaven → (optioneel) samenvatting/afsluiting.
 
 ## 5. Pedagogisch model per hoofdstuk (hard vereiste)
@@ -43,7 +43,7 @@ Dit moet in het datamodel verankerd zitten (elke opgave heeft velden voor theori
 
 Doorlopend genummerd over 5 modules heen (zodat "spring naar hoofdstuk X" een eenduidig, uniek hoofdstuk aanwijst). Modules dienen als organisatie/groepering in de UI, hoofdstuknummering loopt door.
 
-### Module I — Calculus 1 (aansluitend op VWO B)
+### Module I | Calculus 1 (aansluitend op VWO B)
 1. Limieten: van intuïtief (VWO B) naar de formele ε-δ-definitie
 2. Continuïteit en de tussenwaardestelling
 3. De afgeleide: definitie via het differentiequotiënt
@@ -56,7 +56,7 @@ Doorlopend genummerd over 5 modules heen (zodat "spring naar hoofdstuk X" een ee
 10. Integratie: de substitutiemethode
 11. Toepassingen van integralen: oppervlakte, inhoud (schijven/schillen), booglengte
 
-### Module II — Calculus 2
+### Module II | Calculus 2
 12. Partieel integreren
 13. Partieelbreuksplitsing
 14. Goniometrische substitutie
@@ -68,7 +68,7 @@ Doorlopend genummerd over 5 modules heen (zodat "spring naar hoofdstuk X" een ee
 20. Parametrische krommen
 21. Poolcoördinaten
 
-### Module III — Calculus 3 (meerdere variabelen)
+### Module III | Calculus 3 (meerdere variabelen)
 22. Vectoren in de ruimte, in-/uitproduct, lijnen en vlakken in 3D
 23. Vectorwaardige functies en ruimtekrommen
 24. Functies van meerdere variabelen, partiële afgeleiden
@@ -79,7 +79,7 @@ Doorlopend genummerd over 5 modules heen (zodat "spring naar hoofdstuk X" een ee
 29. Stelling van Green
 30. Divergentie, rotatie, stellingen van Stokes en Gauss
 
-### Module IV — Lineaire algebra
+### Module IV | Lineaire algebra
 31. Vectoren en vectorruimten
 32. Matrices en bewerkingen
 33. Stelsels lineaire vergelijkingen, Gauss-eliminatie
@@ -90,7 +90,7 @@ Doorlopend genummerd over 5 modules heen (zodat "spring naar hoofdstuk X" een ee
 38. Diagonaliseren
 39. Inproductruimten en orthogonaliteit *(optioneel, kan later)*
 
-### Module V — Differentiaalvergelijkingen (ODE's)
+### Module V | Differentiaalvergelijkingen (ODE's)
 40. Eerste-orde ODE's: scheiden van variabelen
 41. Eerste-orde lineaire ODE's
 42. Exacte vergelijkingen
@@ -162,11 +162,11 @@ Wiskundige notatie: gebruik LaTeX-rendering (bijv. MathJax of KaTeX) in de templ
 - Opgave-component: vraag → invoerveld → knop "hint" (progressief) → knop "toon uitwerking" → feedback (correct/incorrect indien automatisch controleerbaar).
 - Sidebar of topbar met permanente toegang tot de volledige hoofdstukkenlijst (het "boek-gevoel").
 
-## 9. Scope v1.0 (MVP) — voorstel, ter bevestiging
+## 9. Scope v1.0 (MVP): voorstel, ter bevestiging
 
 Gezien de omvang (47 hoofdstukken, 5 modules) is volledige content voor alles in v1.0 niet realistisch. Voorstel:
 
-- **Volledig gebouwd:** het complete framework — navigatie, datamodel, auth, hoofdstuk-/opgave-weergave, hint/uitwerking-mechaniek, voortgang-tracking — plus **volledige content voor Module I (Calculus 1, hoofdstukken 1-11)**.
+- **Volledig gebouwd:** het complete framework (navigatie, datamodel, auth, hoofdstuk-/opgave-weergave, hint/uitwerking-mechaniek, voortgang-tracking) plus **volledige content voor Module I (Calculus 1, hoofdstukken 1-11)**.
 - **Skeleton aanwezig, content later:** hoofdstukken 12-47 staan al in de inhoudsopgave (zichtbaar, navigeerbaar) maar met placeholder-content ("binnenkort beschikbaar"), zodat de structuur meteen compleet aanvoelt en Anna later per hoofdstuk content kan toevoegen zonder de app opnieuw te hoeven bouwen.
 - Simpele auth: Joes (student) + Anna (admin), geen zelfregistratie nodig voor v1.0.
 

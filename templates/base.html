@@ -20,22 +20,27 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-header">
-      <a href="{{ url_for('dashboard') }}" class="brand">📘 Calculus</a>
+      <a href="{{ url_for('dashboard') }}" class="brand"><span class="brand-mark"></span>Calculus</a>
     </div>
     <nav class="toc">
       {% for m in modules %}
       <div class="toc-module">
-        <div class="toc-module-title">{{ m.order_index }}. {{ m.title }}</div>
+        <div class="toc-module-title">
+          <span>{{ m.order_index }}. {{ m.title }}</span>
+          {% if m.total_count %}<span class="toc-module-count">{{ m.completed_count }}/{{ m.total_count }}</span>{% endif %}
+        </div>
+        {% if m.total_count %}
+        <div class="toc-module-bar"><div class="toc-module-bar-fill" style="width:{{ m.pct }}%"></div></div>
+        {% endif %}
         <ul>
           {% for c in m.chapters %}
-          {% set st = progress.get(c.id, 'not_started') %}
           <li class="{{ 'active' if chapter and chapter.chapter_number == c.chapter_number else '' }}">
             <a href="{{ url_for('chapter_view', chapter_number=c.chapter_number) }}" class="{{ 'placeholder-link' if c.is_placeholder else '' }}">
               <span class="chnum">H{{ c.chapter_number }}</span>
               <span class="chtitle">{{ c.title }}</span>
               {% if not c.is_placeholder %}
-                {% if st == 'completed' %}<span class="badge badge-done">✓</span>
-                {% elif st == 'in_progress' %}<span class="badge badge-progress">•</span>
+                {% if c.status == 'completed' %}<span class="badge badge-done">✓</span>
+                {% elif c.status == 'in_progress' %}<span class="badge badge-progress">•</span>
                 {% endif %}
               {% endif %}
             </a>

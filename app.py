@@ -24,7 +24,7 @@ SB_SVC = {"Authorization": f"Bearer {SUPABASE_SERVICE_KEY}", "apikey": SUPABASE_
 
 # ── Supabase REST helpers (backend gebruikt altijd de service key; autorisatie
 #    gebeurt hier in Python op basis van de Flask-sessie, niet via Supabase RLS
-#    per gebruiker — bewust simpel gehouden voor deze kleine, persoonlijke app) ──
+#    per gebruiker: bewust simpel gehouden voor deze kleine, persoonlijke app) ──
 
 def sb_get(path, params=None):
     r = http.get(f"{SUPABASE_URL}/rest/v1/{path}", headers=SB_SVC, params=params, timeout=10)
@@ -130,6 +130,22 @@ def get_progress_map(user_id):
     return {r["chapter_id"]: r["status"] for r in rows}
 
 
+def annotate_module_progress(modules, progress):
+    """Voegt completed_count/total_count/pct toe aan elke module, voor de voortgangsbalken."""
+    for m in modules:
+        real_chapters = [c for c in m["chapters"] if not c["is_placeholder"]]
+        completed = sum(1 for c in real_chapters if progress.get(c["id"]) == "completed")
+        total = len(real_chapters)
+        m["completed_count"] = completed
+        m["total_count"] = total
+        m["pct"] = round(100 * completed / total) if total else 0
+        for c in m["chapters"]:
+            st = progress.get(c["id"], "not_started")
+            c["status"] = st
+            c["status_pct"] = {"not_started": 0, "in_progress": 50, "completed": 100}.get(st, 0)
+    return modules
+
+
 def get_chapter_by_number(chapter_number):
     rows = sb_get("chapters", {"chapter_number": f"eq.{chapter_number}", "select": "*"})
     return rows[0] if rows else None
@@ -156,6 +172,7 @@ def dashboard():
         return guard
     modules = get_modules_with_chapters()
     progress = get_progress_map(session["user_id"])
+    annotate_module_progress(modules, progress)
     return render_template("dashboard.html", modules=modules, progress=progress)
 
 
@@ -171,6 +188,7 @@ def chapter_view(chapter_number):
 
     modules = get_modules_with_chapters()
     progress = get_progress_map(session["user_id"])
+    annotate_module_progress(modules, progress)
 
     if chapter["is_placeholder"]:
         return render_template("chapter.html", chapter=chapter, exercises=[], modules=modules,

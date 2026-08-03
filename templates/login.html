@@ -3,7 +3,7 @@
 {% block content_noauth %}
 <div class="login-page">
   <form class="login-card" method="post" action="{{ url_for('login') }}">
-    <h1>📘 Calculus</h1>
+    <h1><span class="brand-mark"></span>Calculus</h1>
     <p class="login-sub">Log in om verder te gaan</p>
     {% if error %}<div class="login-error">{{ error }}</div>{% endif %}
     <label>E-mailadres

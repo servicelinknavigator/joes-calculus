@@ -75,7 +75,7 @@ PLACEHOLDER_CHAPTERS = [
 ]
 
 
-# ── Module I: Calculus 1 — volledig uitgewerkt ──────────────────────────────
+# ── Module I: Calculus 1 (volledig uitgewerkt) ──────────────────────────────
 CHAPTERS = [
     {
         "module_id": 1,
@@ -96,11 +96,11 @@ Dat kun je: als $x$ tussen $0{,}95$ en $1{,}05$ ligt (een marge van $0{,}05$ ron
 
 De uitdager verhoogt de inzet: *"Nu wil ik dat $f(x)$ binnen $0{,}001$ van $2$ blijft."* Ook dat kun je garanderen: kies $x$ binnen $0{,}0005$ van $1$, dan blijft $f(x)$ binnen $0{,}001$ van $2$.
 
-Dit spel kun je oneindig blijven spelen. Hoe klein de gevraagde marge rond de uitkomst ook is, jij kunt altijd een bijpassende marge rond $x=1$ vinden die het garandeert. **Precies dát is wat een limiet betekent** — niet "het komt dichtbij", maar "voor elke gevraagde nauwkeurigheid is er een garantie te geven."
+Dit spel kun je oneindig blijven spelen. Hoe klein de gevraagde marge rond de uitkomst ook is, jij kunt altijd een bijpassende marge rond $x=1$ vinden die het garandeert. **Precies dát is wat een limiet betekent:** niet "het komt dichtbij", maar "voor elke gevraagde nauwkeurigheid is er een garantie te geven."
 
 ### Nu geven we het namen
 
-De marge die de uitdager rond de uitkomst $L$ opeist, noemen we $\varepsilon$ (epsilon, een Griekse letter, spreek uit als "epsilon"). De marge die jij daarna rond $x=a$ mag kiezen om dat te garanderen, noemen we $\delta$ (delta). Merk op: de uitdager kiest eerst $\varepsilon$, en jij reageert daarna met een passende $\delta$ — die volgorde is belangrijk.
+De marge die de uitdager rond de uitkomst $L$ opeist, noemen we $\varepsilon$ (epsilon, een Griekse letter, spreek uit als "epsilon"). De marge die jij daarna rond $x=a$ mag kiezen om dat te garanderen, noemen we $\delta$ (delta). Merk op: de uitdager kiest eerst $\varepsilon$, en jij reageert daarna met een passende $\delta$. Die volgorde is belangrijk.
 
 ### De formele definitie, symbool voor symbool
 
@@ -124,17 +124,17 @@ Dat is exact het spelletje van hierboven, nu in symbolen.
 
 Hier is $a=2$, $L=5$, en $f(x)=3x-1$. We moeten voor elke $\varepsilon$ een bijpassende $\delta$ vinden.
 
-**Stap 1 — schrijf op wat we willen bewijzen:** we willen $|f(x)-L| < \varepsilon$, dus $|(3x-1)-5| < \varepsilon$.
+**Stap 1.** Schrijf op wat we willen bewijzen: we willen $|f(x)-L| < \varepsilon$, dus $|(3x-1)-5| < \varepsilon$.
 
-**Stap 2 — werk de linkerkant uit tot je $|x-a|$ ziet staan**, want dat is wat we straks met $\delta$ gaan vergelijken:
+**Stap 2.** Werk de linkerkant uit tot je $|x-a|$ ziet staan, want dat is wat we straks met $\delta$ gaan vergelijken:
 $$|(3x-1)-5| = |3x-6| = |3(x-2)| = 3|x-2|$$
 (We hebben $3x-6$ ontbonden tot $3(x-2)$, zodat de afstand $|x-2|$ zichtbaar wordt.)
 
-**Stap 3 — vertaal de eis naar een eis op $|x-2|$:** we willen dus $3|x-2| < \varepsilon$, oftewel $|x-2| < \dfrac{\varepsilon}{3}$.
+**Stap 3.** Vertaal de eis naar een eis op $|x-2|$: we willen dus $3|x-2| < \varepsilon$, oftewel $|x-2| < \dfrac{\varepsilon}{3}$.
 
-**Stap 4 — kies $\delta$:** dit vertelt ons precies welke $\delta$ werkt. **Kies $\delta = \dfrac{\varepsilon}{3}$.**
+**Stap 4.** Kies $\delta$: dit vertelt ons precies welke $\delta$ werkt. **Kies $\delta = \dfrac{\varepsilon}{3}$.**
 
-**Stap 5 — controleer dat het klopt** (dit is het bewijs zelf): stel dat $0 < |x-2| < \delta = \frac{\varepsilon}{3}$. Dan geldt:
+**Stap 5.** Controleer dat het klopt (dit is het bewijs zelf): stel dat $0 < |x-2| < \delta = \frac{\varepsilon}{3}$. Dan geldt:
 $$|(3x-1)-5| = 3|x-2| < 3\cdot\frac{\varepsilon}{3} = \varepsilon \checkmark$$
 
 Precies wat we wilden. Dus voor elke $\varepsilon>0$ hebben we een werkende $\delta$ gevonden ($\delta=\varepsilon/3$), en dat is exact wat de definitie vraagt.
@@ -144,7 +144,7 @@ Precies wat we wilden. Dus voor elke $\varepsilon>0$ hebben we een werkende $\de
 2. Los op welke $\delta$ (in termen van $\varepsilon$) die uitdrukking kleiner dan $\varepsilon$ maakt.
 3. Kies die $\delta$, en laat met een korte controle zien dat de implicatie klopt.
 
-Bij kwadratische (of hogere-graads) functies moet je vaak eerst een extra grens op $\delta$ afspreken (bijvoorbeeld $\delta \le 1$) om een lastige factor als $|x+a|$ te kunnen begrenzen, voordat je de uiteindelijke $\delta$ kiest — dat zie je uitgewerkt in opgave 4.
+Bij kwadratische (of hogere-graads) functies moet je vaak eerst een extra grens op $\delta$ afspreken (bijvoorbeeld $\delta \le 1$) om een lastige factor als $|x+a|$ te kunnen begrenzen, voordat je de uiteindelijke $\delta$ kiest. Dat zie je uitgewerkt in opgave 4.
 """,
         "summary": "De formele limietdefinitie vervangt het intuïtieve 'wat gebeurt er als x naar a gaat' door een precieze uitspraak met $\\varepsilon$ en $\\delta$. Het bewijs volgt altijd hetzelfde stramien: werk $|f(x)-L|$ uit in $|x-a|$, en kies $\\delta$ zo dat de implicatie klopt.",
         "exercises": [
@@ -176,10 +176,10 @@ Controle: als $0<|x|<\delta=\sqrt{\varepsilon}$, dan $|x|^2 < (\sqrt{\varepsilon
                 "order_index": 3, "difficulty": 2,
                 "question": r"Bereken $\lim_{x \to 3} \dfrac{x^2 - 9}{x - 3}$ en leg uit waarom je niet zomaar $x=3$ mag invullen.",
                 "hints": [
-                    "Invullen geeft $0/0$ — dit is een onbepaalde vorm, geen antwoord.",
+                    "Invullen geeft $0/0$: dit is een onbepaalde vorm, geen antwoord.",
                     "Ontbind de teller in factoren: $x^2-9 = (x-3)(x+3)$, en deel weg tegen de noemer.",
                 ],
-                "full_solution": r"""Directe substitutie geeft $\frac{0}{0}$, een onbepaalde vorm — dat betekent niet dat de limiet niet bestaat, alleen dat je niet direct mag invullen.
+                "full_solution": r"""Directe substitutie geeft $\frac{0}{0}$, een onbepaalde vorm. Dat betekent niet dat de limiet niet bestaat, alleen dat je niet direct mag invullen.
 
 Ontbinden: $\dfrac{x^2-9}{x-3} = \dfrac{(x-3)(x+3)}{x-3} = x+3$ voor $x \ne 3$.
 
@@ -197,9 +197,9 @@ $$\lim_{x\to 3}\frac{x^2-9}{x-3} = \lim_{x\to3}(x+3) = 6$$""",
                 ],
                 "full_solution": r"""$|x^2-16| = |x-4|\cdot|x+4|$.
 
-**Stap 1 — begrens $|x+4|$:** spreek af dat $\delta \le 1$. Als $|x-4|<1$, dan $3<x<5$, dus $7<x+4<9$, dus $|x+4|<9$.
+**Stap 1.** Begrens $|x+4|$: spreek af dat $\delta \le 1$. Als $|x-4|<1$, dan $3<x<5$, dus $7<x+4<9$, dus $|x+4|<9$.
 
-**Stap 2 — kies $\delta$:** we willen $|x-4|\cdot|x+4| < \varepsilon$. Met $|x+4|<9$ volstaat $|x-4| < \varepsilon/9$.
+**Stap 2.** Kies $\delta$: we willen $|x-4|\cdot|x+4| < \varepsilon$. Met $|x+4|<9$ volstaat $|x-4| < \varepsilon/9$.
 
 Kies dus $\delta = \min(1, \varepsilon/9)$.
 
@@ -264,7 +264,7 @@ Omdat $g(0)>0$ en $g(1)<0$, bestaat er volgens de TWS een $c\in(0,1)$ met $g(c)=
                     "Ontbind $f$ eerst: wat gebeurt er met de factor $(x-1)$?",
                     "Bekijk wat er met $g(x)$ gebeurt als $x \\to 0^+$ en $x \\to 0^-$.",
                 ],
-                "full_solution": r"""$f(x) = \frac{(x-1)(x+1)}{x-1} = x+1$ voor $x\ne1$. De limiet $\lim_{x\to1} f(x) = 2$ bestaat wél, maar $f(1)$ is niet gedefinieerd (delen door 0). Dit is een **ophefbare discontinuïteit** — je kunt $f$ continu maken door $f(1):=2$ te definiëren.
+                "full_solution": r"""$f(x) = \frac{(x-1)(x+1)}{x-1} = x+1$ voor $x\ne1$. De limiet $\lim_{x\to1} f(x) = 2$ bestaat wél, maar $f(1)$ is niet gedefinieerd (delen door 0). Dit is een **ophefbare discontinuïteit**: je kunt $f$ continu maken door $f(1):=2$ te definiëren.
 
 Voor $g(x)=1/x$: als $x\to0^+$ gaat $g(x)\to+\infty$, als $x\to0^-$ gaat $g(x)\to-\infty$. Dit is een **oneindige discontinuïteit** (verticale asymptoot).""",
                 "answer_type": "open",
@@ -280,7 +280,7 @@ De afgeleide van $f$ in een punt $x$ is de helling van de raaklijn aan de grafie
 
 $$f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
 
-Dit differentiequotiënt is de richtingscoëfficiënt van de lijn door $(x, f(x))$ en $(x+h, f(x+h))$ — een **secans**. Als $h \to 0$, nadert de secans de **raaklijn**.
+Dit differentiequotiënt is de richtingscoëfficiënt van de lijn door $(x, f(x))$ en $(x+h, f(x+h))$: een **secans**. Als $h \to 0$, nadert de secans de **raaklijn**.
 
 **Voorbeeld.** Bepaal met de definitie de afgeleide van $f(x) = x^2$.
 
@@ -297,7 +297,7 @@ Dit bevestigt de bekende regel $\frac{d}{dx}x^2 = 2x$, maar nu volledig vanuit d
                 "question": r"Bepaal met de definitie de afgeleide van $f(x) = x^3$.",
                 "hints": [
                     "Werk $(x+h)^3$ volledig uit met het binomium (of stap voor stap vermenigvuldigen).",
-                    "Na uitwerken houd je een teller over die deelbaar is door $h$ — deel weg en laat $h\\to0$.",
+                    "Na uitwerken houd je een teller over die deelbaar is door $h$: deel weg en laat $h\\to0$.",
                 ],
                 "full_solution": r"""$$f'(x) = \lim_{h\to0}\frac{(x+h)^3 - x^3}{h}$$
 
@@ -310,7 +310,7 @@ $$f'(x) = \lim_{h\to0}\frac{3x^2h+3xh^2+h^3}{h} = \lim_{h\to0}(3x^2+3xh+h^2) = 3
                 "order_index": 2, "difficulty": 2,
                 "question": r"Bepaal met de definitie de afgeleide van $f(x) = \sqrt{x}$ (voor $x > 0$).",
                 "hints": [
-                    "Je krijgt $\\frac{\\sqrt{x+h}-\\sqrt{x}}{h}$, wat direct $0/0$ geeft bij $h=0$ — vermenigvuldig teller én noemer met de toegevoegde vorm $\\sqrt{x+h}+\\sqrt{x}$.",
+                    "Je krijgt $\\frac{\\sqrt{x+h}-\\sqrt{x}}{h}$, wat direct $0/0$ geeft bij $h=0$: vermenigvuldig teller én noemer met de toegevoegde vorm $\\sqrt{x+h}+\\sqrt{x}$.",
                     "Na vermenigvuldigen met de toegevoegde vorm verdwijnt de wortel uit de teller (verschil van kwadraten), en kun je $h$ wegdelen.",
                 ],
                 "full_solution": r"""$$f'(x) = \lim_{h\to0} \frac{\sqrt{x+h}-\sqrt{x}}{h}$$
@@ -516,7 +516,7 @@ Meetkundig: ergens tussen $a$ en $b$ is de raaklijn evenwijdig aan de lijn door 
 
 **Tweede afgeleide en concaviteit:** $f''(x)>0$ betekent hol/convex (kromme "houdt water vast"), $f''(x)<0$ betekent bol/concaaf. Een **buigpunt** is waar $f''$ van teken wisselt.
 
-**Voorbeeld — krommeonderzoek van $f(x)=x^3-3x$:** $f'(x)=3x^2-3=0 \Rightarrow x=\pm1$. $f'$ is positief buiten $[-1,1]$, negatief erbinnen: lokaal maximum in $x=-1$ ($f(-1)=2$), lokaal minimum in $x=1$ ($f(1)=-2$). $f''(x)=6x=0 \Rightarrow x=0$: buigpunt in $(0,0)$.
+**Voorbeeld: krommeonderzoek van $f(x)=x^3-3x$.** $f'(x)=3x^2-3=0 \Rightarrow x=\pm1$. $f'$ is positief buiten $[-1,1]$, negatief erbinnen: lokaal maximum in $x=-1$ ($f(-1)=2$), lokaal minimum in $x=1$ ($f(1)=-2$). $f''(x)=6x=0 \Rightarrow x=0$: buigpunt in $(0,0)$.
 """,
         "summary": "Kritieke punten ($f'=0$) zijn kandidaten voor extrema; de eerste-afgeleide-test bepaalt of het een maximum of minimum is. De tweede afgeleide vertelt iets over concaviteit en buigpunten. De MWS garandeert een punt waar de raaklijn evenwijdig loopt aan de verbindingslijn tussen de eindpunten.",
         "exercises": [
@@ -629,7 +629,7 @@ $$\lim_{x\to\infty}\frac{\ln x}{x} = \lim_{x\to\infty}\frac{1/x}{1} = \lim_{x\to
                 "order_index": 3, "difficulty": 3,
                 "question": r"Bereken $\lim_{x\to0} \dfrac{e^x - 1 - x}{x^2}$.",
                 "hints": [
-                    "Invullen geeft $0/0$; pas De l'Hôpital toe. Na de eerste keer differentiëren krijg je opnieuw $0/0$ — dus nogmaals toepassen.",
+                    "Invullen geeft $0/0$; pas De l'Hôpital toe. Na de eerste keer differentiëren krijg je opnieuw $0/0$, dus nogmaals toepassen.",
                     "Na twee keer differentiëren van teller en noemer houd je een limiet over die je direct kunt invullen.",
                 ],
                 "full_solution": r"""Eerste keer: $\lim_{x\to0}\frac{e^x-1-x}{x^2}$ geeft $\frac{1-1-0}{0}=\frac00$.
@@ -747,7 +747,7 @@ Het minimum ligt dus bij $x=\pm\sqrt{3{,}5}\approx\pm1{,}87$, met bijbehorend pu
         "chapter_number": 9,
         "title": "Riemannsommen en de hoofdstelling van de integraalrekening",
         "theory_content": r"""
-Om de oppervlakte onder een grafiek te benaderen, verdeel je het interval $[a,b]$ in $n$ even brede stroken van breedte $\Delta x = \frac{b-a}{n}$, en tel je de oppervlaktes van $n$ rechthoeken op — een **Riemannsom**. Bij een rechter-Riemannsom gebruik je de functiewaarde aan de rechterkant van elke strook:
+Om de oppervlakte onder een grafiek te benaderen, verdeel je het interval $[a,b]$ in $n$ even brede stroken van breedte $\Delta x = \frac{b-a}{n}$, en tel je de oppervlaktes van $n$ rechthoeken op: een **Riemannsom**. Bij een rechter-Riemannsom gebruik je de functiewaarde aan de rechterkant van elke strook:
 
 $$\sum_{i=1}^{n} f(x_i)\, \Delta x$$
 
@@ -757,7 +757,7 @@ $$\int_a^b f(x)\,dx = \lim_{n\to\infty} \sum_{i=1}^n f(x_i)\Delta x$$
 **Hoofdstelling van de integraalrekening.** Als $F$ een primitieve is van $f$ (dus $F'=f$), dan:
 $$\int_a^b f(x)\,dx = F(b) - F(a)$$
 
-Dit koppelt integreren (oppervlakte) direct aan differentiëren (het omgekeerde van een afgeleide zoeken) — een fundamenteel resultaat.
+Dit koppelt integreren (oppervlakte) direct aan differentiëren (het omgekeerde van een afgeleide zoeken): een fundamenteel resultaat.
 
 **Voorbeeld.** $\int_1^3 (2x+1)\,dx$. Een primitieve is $F(x) = x^2+x$. Dan $F(3)-F(1) = (9+3)-(1+1) = 12-2=10$.
 """,
@@ -776,7 +776,7 @@ $f(0{,}5)=0{,}25$, $f(1)=1$, $f(1{,}5)=2{,}25$, $f(2)=4$.
 
 Som: $(0{,}25+1+2{,}25+4)\times0{,}5 = 7{,}5\times0{,}5 = 3{,}75$.
 
-(Ter vergelijking: de exacte waarde is $\int_0^2x^2dx = \frac{8}{3}\approx2{,}67$ — de rechter-Riemannsom overschat hier omdat $x^2$ stijgend is.)""",
+(Ter vergelijking: de exacte waarde is $\int_0^2x^2dx = \frac{8}{3}\approx2{,}67$, de rechter-Riemannsom overschat hier omdat $x^2$ stijgend is.)""",
                 "answer_type": "numeric",
                 "correct_answer": "3.75",
             },
@@ -867,7 +867,7 @@ $$\int_0^1 xe^{x^2}dx = \frac12\int_0^1 e^u\,du = \frac12[e^u]_0^1 = \frac12(e-1
                 "order_index": 3, "difficulty": 2,
                 "question": r"Bereken $\displaystyle\int \cos(x)\sin^3(x)\,dx$.",
                 "hints": [
-                    "Kies $u=\\sin(x)$, dan $du=\\cos(x)\\,dx$ — precies wat er nog staat.",
+                    "Kies $u=\\sin(x)$, dan $du=\\cos(x)\\,dx$: precies wat er nog staat.",
                     "De integraal wordt $\\int u^3\\,du$.",
                 ],
                 "full_solution": r"""$u=\sin(x)$, $du=\cos(x)dx$.
@@ -898,10 +898,10 @@ $$\int \frac{x\,dx}{\sqrt{x^2+9}} = \frac12\int u^{-1/2}\,du = \frac12\cdot 2u^{
 **Oppervlakte tussen twee grafieken.** Als $f(x) \ge g(x)$ op $[a,b]$:
 $$A = \int_a^b \big(f(x)-g(x)\big)\,dx$$
 
-**Inhoud van omwentelingslichamen — schijvenmethode.** Als het gebied onder $y=f(x)$ op $[a,b]$ om de $x$-as wentelt:
+**Inhoud van omwentelingslichamen (schijvenmethode).** Als het gebied onder $y=f(x)$ op $[a,b]$ om de $x$-as wentelt:
 $$V = \pi\int_a^b [f(x)]^2\,dx$$
 
-**Inhoud — schillenmethode.** Als het gebied tussen $y=f(x)$ en de $y$-as (op $[a,b]$, $a\ge0$) om de $y$-as wentelt:
+**Inhoud (schillenmethode).** Als het gebied tussen $y=f(x)$ en de $y$-as (op $[a,b]$, $a\ge0$) om de $y$-as wentelt:
 $$V = 2\pi\int_a^b x\,f(x)\,dx$$
 
 **Booglengte.** De lengte van de grafiek van $y=f(x)$ van $x=a$ tot $x=b$:
@@ -1026,7 +1026,7 @@ def main():
             theory_content=ch["theory_content"], summary=ch["summary"], is_placeholder=False,
         )
         replace_exercises(chapter_id, ch["exercises"])
-        print(f"  H{ch['chapter_number']:>2} {ch['title'][:60]} — {len(ch['exercises'])} opgaven")
+        print(f"  H{ch['chapter_number']:>2} {ch['title'][:60]} | {len(ch['exercises'])} opgaven")
 
     print("Seeding placeholder-hoofdstukken (Module II-V)...")
     for module_id, chapter_number, title in PLACEHOLDER_CHAPTERS:

@@ -19,7 +19,7 @@ Hoofdstuk 12-47 staan al in de inhoudsopgave als "binnenkort beschikbaar" placeh
 2. Open de **SQL editor** en plak de volledige inhoud van [supabase_schema.sql](supabase_schema.sql). Dit maakt alle tabellen, RLS-policies en de 5 modules aan.
 3. Ga naar **Authentication → Users** en maak twee gebruikers handmatig aan (geen zelfregistratie in v1.0):
    - `contact@slnsolutions.nl` (wordt automatisch admin, zie de trigger in het schema) met een wachtwoord naar keuze.
-   - Joes' e-mailadres, met een wachtwoord naar keuze — dit wordt automatisch een `student`-account.
+   - Joes' e-mailadres, met een wachtwoord naar keuze: dit wordt automatisch een `student`-account.
 4. Noteer uit **Project Settings → API**:
    - `Project URL` → `SUPABASE_URL`
    - `anon public` key → `SUPABASE_ANON_KEY`
