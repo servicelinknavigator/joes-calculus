@@ -18,11 +18,13 @@
 <body>
 {% if current_user %}
 <div class="layout">
-  <aside class="sidebar">
+  <div class="sidebar-backdrop" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <a href="{{ url_for('dashboard') }}" class="brand"><span class="brand-mark"></span>Calculus</a>
+      <button type="button" class="sidebar-close" onclick="closeSidebar()" aria-label="Menu sluiten">✕</button>
     </div>
-    <nav class="toc">
+    <nav class="toc" onclick="if (event.target.closest('a')) closeSidebar();">
       {% for m in modules %}
       <div class="toc-module">
         <div class="toc-module-title">
@@ -53,6 +55,10 @@
   </aside>
   <div class="main-wrap">
     <header class="topbar">
+      <button type="button" class="hamburger" onclick="openSidebar()" aria-label="Menu openen">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="{{ url_for('dashboard') }}" class="brand mobile-brand"><span class="brand-mark"></span>Calculus</a>
       <div class="topbar-user">Ingelogd als {{ current_user.email }}</div>
       <a href="{{ url_for('logout') }}" class="logout-link">Uitloggen</a>
     </header>
@@ -61,6 +67,16 @@
     </main>
   </div>
 </div>
+<script>
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.querySelector('.sidebar-backdrop').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.querySelector('.sidebar-backdrop').classList.remove('open');
+}
+</script>
 {% else %}
   {% block content_noauth %}{% endblock %}
 {% endif %}
