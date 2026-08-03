@@ -20,10 +20,11 @@
 
 <section class="exercises-block">
   <h2>Opgaven</h2>
+  <p class="section-hint">Je kunt van elke opgave zoveel soortgelijke varianten laten maken als je wilt, ideaal om te blijven oefenen.</p>
   {% for ex in exercises %}
   <div class="exercise-card" data-exercise-id="{{ ex.id }}">
     <div class="exercise-head">
-      <span class="exercise-num">Opgave {{ loop.index }}</span>
+      <span class="exercise-num">Opgave {{ loop.index }}{% if ex.is_ai_generated %} <span class="ai-badge">AI-variant</span>{% endif %}</span>
       <span class="difficulty diff-{{ ex.difficulty }}">{{ '●' * ex.difficulty }}{{ '○' * (3 - ex.difficulty) }}</span>
     </div>
     <div class="exercise-question">{{ ex.question_html | safe }}</div>
@@ -55,9 +56,58 @@
         </div>
         <div class="upload-feedback" id="upload-feedback-{{ ex.id }}"></div>
       </div>
+
+      {% if ex.submissions %}
+      <div class="submission-history">
+        <span class="result-label">Eerder ingestuurde uitwerkingen</span>
+        {% for sub in ex.submissions %}
+        <div class="submission-item">
+          {% if sub.image_path %}<img src="{{ url_for('uploaded_image_exercise', submission_id=sub.id) }}" alt="Uitwerking" class="submission-thumb">{% endif %}
+          <div class="submission-body">
+            <span class="submission-verdict verdict-{{ sub.ai_verdict }}">
+              {{ '✓ Goed' if sub.ai_verdict == 'correct' else ('✗ Nog niet goed' if sub.ai_verdict == 'incorrect' else 'Niet duidelijk') }}
+            </span>
+            <span class="submission-date">{{ sub.created_at[:16].replace('T', ' ') }}</span>
+            <p class="submission-feedback">{{ sub.ai_feedback }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="variant-row">
+        <button type="button" class="btn-variant" onclick="generateVariant({{ ex.id }}, {{ chapter.chapter_number }}, false)">+ Nog een soortgelijke opgave genereren</button>
+        <span class="variant-status" id="variant-status-{{ ex.id }}"></span>
+      </div>
     </div>
   </div>
   {% endfor %}
+</section>
+
+<section class="tests-block">
+  <div class="tests-block-header">
+    <h2>Toetsen</h2>
+    <form method="post" action="{{ url_for('test_new', chapter_number=chapter.chapter_number) }}" onsubmit="return startTest(this)">
+      <button type="submit" class="btn-new-test">Nieuwe toets maken</button>
+    </form>
+  </div>
+  <p class="section-hint">Een toets bevat één nieuwe opgave per subcategorie uit dit hoofdstuk, met een score aan het eind.</p>
+  {% if tests %}
+  <div class="test-list">
+    {% for t in tests %}
+    <a href="{{ url_for('test_view', test_id=t.id) }}" class="test-row">
+      <span class="test-row-date">{{ t.created_at[:16].replace('T', ' ') }}</span>
+      {% if t.status == 'completed' %}
+        <span class="test-row-score">{{ t.score }}/{{ t.total }}</span>
+      {% else %}
+        <span class="test-row-status">Bezig</span>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="section-hint">Nog geen toetsen gemaakt voor dit hoofdstuk.</p>
+  {% endif %}
 </section>
 
 {% if summary_html %}
@@ -106,6 +156,10 @@ async function reportResult(exerciseId, wasCorrect, btn) {
   } catch (e) {
     // stilzwijgend negeren, de knopstatus is al bijgewerkt
   }
+  if (wasCorrect) {
+    const chapterNum = {{ chapter.chapter_number }};
+    generateVariant(exerciseId, chapterNum, true);
+  }
 }
 
 async function uploadSolution(exerciseId) {
@@ -141,10 +195,41 @@ async function uploadSolution(exerciseId) {
     if (window.renderMathInElement) {
       renderMathInElement(feedbackEl, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
     }
+    if (data.verdict === 'correct') {
+      generateVariant(exerciseId, {{ chapter.chapter_number if not placeholder else 0 }}, true);
+    }
   } catch (e) {
     feedbackEl.textContent = 'Nakijken mislukt, probeer opnieuw.';
     feedbackEl.className = 'upload-feedback bad';
   }
+}
+
+async function generateVariant(exerciseId, chapterNumber, isAuto) {
+  const statusEl = document.getElementById('variant-status-' + exerciseId);
+  if (!statusEl) return;
+  statusEl.textContent = isAuto ? 'Goed gedaan! Ik maak een nieuwe, soortgelijke opgave klaar...' : 'Nieuwe opgave wordt gemaakt...';
+  statusEl.className = 'variant-status neutral';
+  try {
+    const res = await fetch('/exercise/' + exerciseId + '/generate-variant', {method: 'POST'});
+    const data = await res.json();
+    if (!res.ok) {
+      statusEl.textContent = data.error || 'Genereren mislukt, probeer opnieuw.';
+      statusEl.className = 'variant-status bad';
+      return;
+    }
+    statusEl.textContent = 'Klaar! De pagina wordt ververst...';
+    window.location.href = '/chapter/' + chapterNumber;
+  } catch (e) {
+    statusEl.textContent = 'Genereren mislukt, probeer opnieuw.';
+    statusEl.className = 'variant-status bad';
+  }
+}
+
+function startTest(form) {
+  const btn = form.querySelector('button');
+  btn.disabled = true;
+  btn.textContent = 'Toets wordt gemaakt...';
+  return true;
 }
 </script>
 {% endblock %}

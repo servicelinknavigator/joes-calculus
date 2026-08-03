@@ -50,15 +50,17 @@ create table if not exists chapters (
 
 -- ── exercises ────────────────────────────────────────────────────────────────
 create table if not exists exercises (
-  id              serial primary key,
-  chapter_id      int not null references chapters(id) on delete cascade,
-  order_index     int not null,
-  difficulty      int not null default 1 check (difficulty between 1 and 3),
-  question        text not null,           -- opgavetekst (markdown/LaTeX)
-  hints           jsonb not null default '[]'::jsonb,  -- progressieve hints ("tijdens")
-  full_solution   text not null,           -- volledige uitwerking met toelichting ("achteraf")
-  answer_type     text not null default 'open' check (answer_type in ('numeric', 'expression', 'open')),
-  correct_answer  text                     -- indien automatisch controleerbaar
+  id                 serial primary key,
+  chapter_id         int not null references chapters(id) on delete cascade,
+  order_index        int not null,          -- ook de "slot"/subcategorie: meerdere rijen per slot mogelijk
+  difficulty         int not null default 1 check (difficulty between 1 and 3),
+  question           text not null,           -- opgavetekst (markdown/LaTeX)
+  hints              jsonb not null default '[]'::jsonb,  -- progressieve hints ("tijdens")
+  full_solution      text not null,           -- volledige uitwerking met toelichting ("achteraf")
+  answer_type        text not null default 'open' check (answer_type in ('numeric', 'expression', 'open')),
+  correct_answer     text,                    -- indien automatisch controleerbaar
+  is_ai_generated    boolean not null default false,  -- true = door AI gemaakte variant, niet de originele seed
+  source_exercise_id int references exercises(id)     -- verwijst naar de originele opgave van dit slot
 );
 
 -- ── progress ─────────────────────────────────────────────────────────────────
@@ -94,6 +96,38 @@ create table if not exists exercise_submissions (
   created_at   timestamptz not null default now()
 );
 
+-- ── tests (toetsen) ──────────────────────────────────────────────────────────
+create table if not exists tests (
+  id           serial primary key,
+  chapter_id   int not null references chapters(id) on delete cascade,
+  user_id      uuid not null references profiles(id) on delete cascade,
+  status       text not null default 'in_progress' check (status in ('in_progress','completed')),
+  score        int,
+  total        int not null,
+  created_at   timestamptz not null default now(),
+  completed_at timestamptz
+);
+
+create table if not exists test_questions (
+  id            serial primary key,
+  test_id       int not null references tests(id) on delete cascade,
+  order_index   int not null,
+  question      text not null,
+  full_solution text not null,
+  verdict       text,
+  ai_feedback   text
+);
+
+create table if not exists test_submissions (
+  id                serial primary key,
+  test_question_id  int not null references test_questions(id) on delete cascade,
+  user_id           uuid not null references profiles(id) on delete cascade,
+  image_path        text,
+  ai_verdict        text,
+  ai_feedback       text,
+  created_at        timestamptz not null default now()
+);
+
 -- ── RLS ──────────────────────────────────────────────────────────────────────
 alter table profiles              enable row level security;
 alter table modules               enable row level security;
@@ -102,6 +136,9 @@ alter table exercises             enable row level security;
 alter table progress              enable row level security;
 alter table exercise_attempts     enable row level security;
 alter table exercise_submissions  enable row level security;
+alter table tests                 enable row level security;
+alter table test_questions        enable row level security;
+alter table test_submissions      enable row level security;
 
 -- profiles: iedereen mag het eigen profiel lezen/updaten, admin mag alles lezen
 create policy "profiles select own or admin" on profiles for select
@@ -135,6 +172,29 @@ create policy "attempts insert own" on exercise_attempts for insert
 create policy "submissions select own or admin" on exercise_submissions for select
   using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
 create policy "submissions insert own" on exercise_submissions for insert
+  with check (auth.uid() = user_id);
+
+-- tests / test_questions / test_submissions
+create policy "tests select own or admin" on tests for select
+  using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
+create policy "tests insert own" on tests for insert
+  with check (auth.uid() = user_id);
+create policy "tests update own" on tests for update
+  using (auth.uid() = user_id);
+
+create policy "test_questions select via test" on test_questions for select
+  using (exists (
+    select 1 from tests t where t.id = test_questions.test_id
+    and (t.user_id = auth.uid() or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'))
+  ));
+create policy "test_questions insert via test" on test_questions for insert
+  with check (exists (select 1 from tests t where t.id = test_questions.test_id and t.user_id = auth.uid()));
+create policy "test_questions update via test" on test_questions for update
+  using (exists (select 1 from tests t where t.id = test_questions.test_id and t.user_id = auth.uid()));
+
+create policy "test_submissions select own or admin" on test_submissions for select
+  using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
+create policy "test_submissions insert own" on test_submissions for insert
   with check (auth.uid() = user_id);
 
 -- ── seed: modules ────────────────────────────────────────────────────────────

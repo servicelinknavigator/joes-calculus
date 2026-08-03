@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Toets H{{ chapter.chapter_number }}{% endblock %}
+{% block content %}
+
+<div class="chapter-nav-top">
+  <span class="chapter-eyebrow">Toets | Hoofdstuk {{ chapter.chapter_number }}</span>
+  <h1>{{ chapter.title }}</h1>
+</div>
+
+{% if test.status == 'completed' %}
+<div class="test-score-banner">
+  <span class="test-score-number">{{ test.score }}/{{ test.total }}</span>
+  <span class="test-score-label">afgerond op {{ test.completed_at[:16].replace('T', ' ') }}</span>
+</div>
+{% else %}
+<p class="section-hint">Werk elke vraag op papier uit en beoordeel jezelf, of upload een foto zodat ik 'm nakijk. Rond de toets af zodra je alles hebt gedaan.</p>
+{% endif %}
+
+<section class="exercises-block">
+  {% for q in questions %}
+  <div class="exercise-card" data-question-id="{{ q.id }}">
+    <div class="exercise-head">
+      <span class="exercise-num">Vraag {{ loop.index }}</span>
+      {% if q.verdict %}
+        <span class="submission-verdict verdict-{{ q.verdict }}">
+          {{ '✓ Goed' if q.verdict == 'correct' else ('✗ Nog niet goed' if q.verdict == 'incorrect' else 'Niet duidelijk') }}
+        </span>
+      {% endif %}
+    </div>
+    <div class="exercise-question">{{ q.question_html | safe }}</div>
+
+    <details class="solution-block">
+      <summary>Volledige uitwerking</summary>
+      <div class="solution-content">{{ q.full_solution_html | safe }}</div>
+    </details>
+
+    {% if test.status != 'completed' %}
+    <div class="result-block">
+      <div class="result-row">
+        <span class="result-label">Hoe ging het?</span>
+        <div class="report-buttons">
+          <button type="button" class="btn-report btn-report-good {{ 'active' if q.verdict == 'correct' }}" onclick="reportTestResult({{ test.id }}, {{ q.id }}, true, this)">✓ Ik had dit goed</button>
+          <button type="button" class="btn-report btn-report-bad {{ 'active' if q.verdict == 'incorrect' }}" onclick="reportTestResult({{ test.id }}, {{ q.id }}, false, this)">✗ Ik had dit fout</button>
+        </div>
+      </div>
+
+      <div class="upload-row">
+        <span class="result-label">Of upload een foto van je uitwerking, dan kijk ik hem na</span>
+        <div class="upload-controls">
+          <input type="file" accept="image/*" class="upload-input" id="upload-q-{{ q.id }}">
+          <button type="button" class="btn-upload" onclick="uploadTestSolution({{ test.id }}, {{ q.id }})">Laat nakijken</button>
+        </div>
+        <div class="upload-feedback" id="upload-feedback-q-{{ q.id }}"></div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if q.submissions %}
+    <div class="submission-history">
+      <span class="result-label">Ingestuurde uitwerkingen</span>
+      {% for sub in q.submissions %}
+      <div class="submission-item">
+        {% if sub.image_path %}<img src="{{ url_for('uploaded_image_test', submission_id=sub.id) }}" alt="Uitwerking" class="submission-thumb">{% endif %}
+        <div class="submission-body">
+          <span class="submission-verdict verdict-{{ sub.ai_verdict }}">
+            {{ '✓ Goed' if sub.ai_verdict == 'correct' else ('✗ Nog niet goed' if sub.ai_verdict == 'incorrect' else 'Niet duidelijk') }}
+          </span>
+          <span class="submission-date">{{ sub.created_at[:16].replace('T', ' ') }}</span>
+          <p class="submission-feedback">{{ sub.ai_feedback }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+
+{% if test.status != 'completed' %}
+<form method="post" action="{{ url_for('test_complete', test_id=test.id) }}" class="complete-form">
+  <button type="submit">Toets afronden en score berekenen</button>
+</form>
+{% endif %}
+
+<script>
+async function reportTestResult(testId, questionId, wasCorrect, btn) {
+  const card = document.querySelector('.exercise-card[data-question-id="' + questionId + '"]');
+  const goodBtn = card.querySelector('.btn-report-good');
+  const badBtn = card.querySelector('.btn-report-bad');
+  goodBtn.classList.remove('active');
+  badBtn.classList.remove('active');
+  btn.classList.add('active');
+  try {
+    await fetch('/test/' + testId + '/question/' + questionId + '/self_report', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({correct: wasCorrect})
+    });
+  } catch (e) {}
+}
+
+async function uploadTestSolution(testId, questionId) {
+  const fileInput = document.getElementById('upload-q-' + questionId);
+  const feedbackEl = document.getElementById('upload-feedback-q-' + questionId);
+  if (!fileInput.files || !fileInput.files[0]) {
+    feedbackEl.textContent = 'Kies eerst een foto.';
+    feedbackEl.className = 'upload-feedback bad';
+    return;
+  }
+  feedbackEl.textContent = 'Bezig met nakijken...';
+  feedbackEl.className = 'upload-feedback neutral';
+
+  const formData = new FormData();
+  formData.append('image', fileInput.files[0]);
+
+  try {
+    const res = await fetch('/test/' + testId + '/question/' + questionId + '/upload', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      feedbackEl.textContent = data.error || 'Nakijken mislukt, probeer opnieuw.';
+      feedbackEl.className = 'upload-feedback bad';
+      return;
+    }
+    const verdictLabel = data.verdict === 'correct' ? '✓ Goed'
+      : data.verdict === 'incorrect' ? '✗ Nog niet goed'
+      : 'Niet helemaal duidelijk';
+    feedbackEl.innerHTML = '<strong>' + verdictLabel + '</strong><br>' + data.feedback;
+    feedbackEl.className = 'upload-feedback ' + (data.verdict === 'correct' ? 'ok' : data.verdict === 'incorrect' ? 'bad' : 'neutral');
+    if (window.renderMathInElement) {
+      renderMathInElement(feedbackEl, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+    }
+  } catch (e) {
+    feedbackEl.textContent = 'Nakijken mislukt, probeer opnieuw.';
+    feedbackEl.className = 'upload-feedback bad';
+  }
+}
+</script>
+{% endblock %}
