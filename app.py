@@ -206,6 +206,25 @@ def get_exercises(chapter_id):
     return sb_get("exercises", {"chapter_id": f"eq.{chapter_id}", "select": "*", "order": "order_index"})
 
 
+def get_latest_results(user_id, exercise_ids):
+    """Geeft per exercise_id het laatst opgeslagen resultaat (True/False), voor het
+    onthouden van de goed/fout-knoppen zodra je een hoofdstuk opnieuw bezoekt."""
+    if not exercise_ids:
+        return {}
+    ids = ",".join(str(i) for i in exercise_ids)
+    rows = sb_get("exercise_attempts", {
+        "user_id": f"eq.{user_id}",
+        "exercise_id": f"in.({ids})",
+        "select": "exercise_id,is_correct,created_at",
+        "order": "created_at.desc",
+    })
+    latest = {}
+    for r in rows:
+        if r["exercise_id"] not in latest and r["is_correct"] is not None:
+            latest[r["exercise_id"]] = r["is_correct"]
+    return latest
+
+
 def set_progress(user_id, chapter_id, status):
     existing = sb_get("progress", {"user_id": f"eq.{user_id}", "chapter_id": f"eq.{chapter_id}", "select": "id"})
     if existing:
@@ -250,9 +269,11 @@ def chapter_view(chapter_number):
         progress[chapter["id"]] = "in_progress"
 
     exercises = get_exercises(chapter["id"])
+    latest_results = get_latest_results(session["user_id"], [ex["id"] for ex in exercises])
     for ex in exercises:
         ex["question_html"] = md(ex["question"])
         ex["full_solution_html"] = md(ex["full_solution"])
+        ex["last_result"] = latest_results.get(ex["id"])
 
     return render_template(
         "chapter.html",

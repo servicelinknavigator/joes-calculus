@@ -42,8 +42,8 @@
       <div class="result-row">
         <span class="result-label">Werk je opgave op papier uit. Hoe ging het?</span>
         <div class="report-buttons">
-          <button type="button" class="btn-report btn-report-good" onclick="reportResult({{ ex.id }}, true, this)">✓ Ik had dit goed</button>
-          <button type="button" class="btn-report btn-report-bad" onclick="reportResult({{ ex.id }}, false, this)">✗ Ik had dit fout</button>
+          <button type="button" class="btn-report btn-report-good {{ 'active' if ex.last_result == True }}" onclick="reportResult({{ ex.id }}, true, this)">✓ Ik had dit goed</button>
+          <button type="button" class="btn-report btn-report-bad {{ 'active' if ex.last_result == False }}" onclick="reportResult({{ ex.id }}, false, this)">✗ Ik had dit fout</button>
         </div>
       </div>
 
