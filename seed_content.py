@@ -3,9 +3,8 @@
 Seed-script voor de Joes Calculus-app.
 
 Vult Supabase met:
-- alle 47 hoofdstukken (chapters), Module I (1-11) volledig uitgewerkt,
-  hoofdstuk 12-47 als placeholder ("binnenkort beschikbaar")
-- de opgaven (exercises) voor hoofdstuk 1-11
+- alle 47 hoofdstukken (chapters), volledig uitgewerkt (Module I t/m V)
+- de opgaven (exercises) per hoofdstuk, met hints en volledige uitwerking
 
 Gebruik:
     1. Zorg dat supabase_schema.sql al is uitgevoerd in de Supabase SQL editor
@@ -28,6 +27,7 @@ load_dotenv(override=True)
 from chapters_module2 import CHAPTERS_2  # noqa: E402
 from chapters_module3 import CHAPTERS_3  # noqa: E402
 from chapters_module4 import CHAPTERS_4  # noqa: E402
+from chapters_module5 import CHAPTERS_5  # noqa: E402
 
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_SERVICE_KEY = os.environ["SUPABASE_SERVICE_KEY"]
@@ -38,17 +38,10 @@ HEADERS = {
 }
 
 
-# ── Placeholder-titels voor hoofdstuk 40-47 (module_id, chapter_number, title) ──
-# (hoofdstuk 12-21 in chapters_module2.py, 22-30 in chapters_module3.py, 31-39 in chapters_module4.py)
+# ── Geen placeholder-hoofdstukken meer over: alle 47 hoofdstukken zijn nu volledig uitgewerkt ──
+# (hoofdstuk 12-21 in chapters_module2.py, 22-30 in chapters_module3.py,
+#  31-39 in chapters_module4.py, 40-47 in chapters_module5.py)
 PLACEHOLDER_CHAPTERS = [
-    (5, 40, "Eerste-orde ODE's: scheiden van variabelen"),
-    (5, 41, "Eerste-orde lineaire ODE's"),
-    (5, 42, "Exacte vergelijkingen"),
-    (5, 43, "Tweede-orde lineaire ODE's: homogeen, karakteristieke vergelijking"),
-    (5, 44, "Particuliere oplossingen: onbepaalde coëfficiënten"),
-    (5, 45, "Variatie van parameters"),
-    (5, 46, "Toepassingen: groei/verval, mengproblemen, mechanische trillingen"),
-    (5, 47, "Stelsels ODE's en Laplace-transformatie"),
 ]
 
 
@@ -1233,7 +1226,7 @@ def replace_exercises(chapter_id, exercises):
     r.raise_for_status()
 
 
-ALL_CHAPTERS = CHAPTERS + CHAPTERS_2 + CHAPTERS_3 + CHAPTERS_4
+ALL_CHAPTERS = CHAPTERS + CHAPTERS_2 + CHAPTERS_3 + CHAPTERS_4 + CHAPTERS_5
 
 
 def main():
@@ -1246,10 +1239,11 @@ def main():
         replace_exercises(chapter_id, ch["exercises"])
         print(f"  H{ch['chapter_number']:>2} {ch['title'][:60]} | {len(ch['exercises'])} opgaven")
 
-    print("Seeding placeholder-hoofdstukken (Module III-V)...")
-    for module_id, chapter_number, title in PLACEHOLDER_CHAPTERS:
-        upsert_chapter(module_id, chapter_number, title, is_placeholder=True)
-        print(f"  H{chapter_number:>2} {title[:60]} (placeholder)")
+    if PLACEHOLDER_CHAPTERS:
+        print("Seeding placeholder-hoofdstukken...")
+        for module_id, chapter_number, title in PLACEHOLDER_CHAPTERS:
+            upsert_chapter(module_id, chapter_number, title, is_placeholder=True)
+            print(f"  H{chapter_number:>2} {title[:60]} (placeholder)")
 
     print("Klaar.")
 
