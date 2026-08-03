@@ -16,8 +16,12 @@ Gebruik:
     Het script is idempotent: opnieuw draaien overschrijft bestaande hoofdstukken/opgaven.
 """
 import os
+import sys
 import requests as http
 from dotenv import load_dotenv
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 load_dotenv(override=True)
 
