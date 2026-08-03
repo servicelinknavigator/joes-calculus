@@ -82,24 +82,69 @@ CHAPTERS = [
         "chapter_number": 1,
         "title": "Limieten: van intuïtief naar de formele ε-δ-definitie",
         "theory_content": r"""
-In VWO B heb je limieten al informeel gezien: het gedrag van een functie als $x$ steeds dichter bij een waarde $a$ komt (bijvoorbeeld bij asymptoten). In calculus maken we dit begrip **precies**.
+### Wat je al weet
 
-**Formele definitie.** We zeggen $\lim_{x \to a} f(x) = L$ als geldt: voor elke $\varepsilon > 0$ bestaat er een $\delta > 0$ zodat
+In VWO B heb je limieten informeel gezien: "als $x$ steeds dichter bij $a$ komt, komt $f(x)$ steeds dichter bij een waarde $L$." Dat werkt prima om een idee te krijgen, bijvoorbeeld bij een asymptoot. Maar "steeds dichter bij" is eigenlijk best vaag. Hóé dichtbij? Dichtbij genoeg waarvoor? In calculus maken we dat idee volledig precies. Dat klinkt misschien intimiderend, dus we bouwen het rustig op, helemaal vanaf nul.
+
+### Een spelletje, geen formule
+
+Stel je hebt de functie $f(x) = 2x$, en we kijken naar $x=1$. Daar geldt $f(1) = 2$.
+
+Iemand daagt je uit: *"Ik wil dat $f(x)$ binnen $0{,}1$ van $2$ blijft, dus $f(x)$ moet tussen $1{,}9$ en $2{,}1$ liggen. Kun jij een marge rond $x=1$ geven waarbinnen dat altijd lukt?"*
+
+Dat kun je: als $x$ tussen $0{,}95$ en $1{,}05$ ligt (een marge van $0{,}05$ rond $1$), dan geldt $f(x)=2x$ automatisch tussen $1{,}9$ en $2{,}1$. Reken maar na: $2\times0{,}95=1{,}9$ en $2\times1{,}05=2{,}1$. Je hebt de uitdaging gewonnen.
+
+De uitdager verhoogt de inzet: *"Nu wil ik dat $f(x)$ binnen $0{,}001$ van $2$ blijft."* Ook dat kun je garanderen: kies $x$ binnen $0{,}0005$ van $1$, dan blijft $f(x)$ binnen $0{,}001$ van $2$.
+
+Dit spel kun je oneindig blijven spelen. Hoe klein de gevraagde marge rond de uitkomst ook is, jij kunt altijd een bijpassende marge rond $x=1$ vinden die het garandeert. **Precies dát is wat een limiet betekent** — niet "het komt dichtbij", maar "voor elke gevraagde nauwkeurigheid is er een garantie te geven."
+
+### Nu geven we het namen
+
+De marge die de uitdager rond de uitkomst $L$ opeist, noemen we $\varepsilon$ (epsilon, een Griekse letter, spreek uit als "epsilon"). De marge die jij daarna rond $x=a$ mag kiezen om dat te garanderen, noemen we $\delta$ (delta). Merk op: de uitdager kiest eerst $\varepsilon$, en jij reageert daarna met een passende $\delta$ — die volgorde is belangrijk.
+
+### De formele definitie, symbool voor symbool
+
+$$\lim_{x \to a} f(x) = L$$
+
+betekent: **voor elke** $\varepsilon > 0$ (hoe klein de uitdager ook kiest) **bestaat er een** $\delta > 0$ (die jij mag kiezen, meestal in termen van $\varepsilon$) **zodat**:
 
 $$0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon$$
 
-In woorden: hoe klein je de foutmarge $\varepsilon$ rond $L$ ook kiest, er is altijd een marge $\delta$ rond $a$ te vinden waarbinnen $f(x)$ gegarandeerd binnen die foutmarge blijft.
+Lees dit stukje voor stukje:
+- $|x-a|$ is de afstand tussen $x$ en $a$ (hoe dicht $x$ bij $a$ zit).
+- $0 < |x-a| < \delta$ betekent: $x$ zit dichter dan $\delta$ bij $a$, maar is niet gelijk aan $a$ zelf (we kijken naar de buurt van $a$, niet naar $a$ zelf).
+- $|f(x)-L|$ is de afstand tussen $f(x)$ en $L$.
+- De pijl $\implies$ zegt: *als* $x$ binnen jouw gekozen marge $\delta$ van $a$ zit, *dan* zit $f(x)$ gegarandeerd binnen de geëiste marge $\varepsilon$ van $L$.
 
-**Voorbeeld.** Bewijs dat $\lim_{x \to 2} (3x - 1) = 5$.
+Dat is exact het spelletje van hierboven, nu in symbolen.
 
-We werken $|f(x) - L|$ uit in termen van $|x - a|$:
-$$|(3x - 1) - 5| = |3x - 6| = 3|x - 2|$$
+### Een volledig uitgewerkt voorbeeld, met uitleg per stap
 
-We willen $3|x-2| < \varepsilon$, dus $|x - 2| < \varepsilon/3$. Kies dus $\delta = \varepsilon/3$.
+**Bewijs dat $\lim_{x \to 2} (3x - 1) = 5$.**
 
-**Controle:** als $0 < |x-2| < \delta = \varepsilon/3$, dan $|(3x-1)-5| = 3|x-2| < 3 \cdot \frac{\varepsilon}{3} = \varepsilon$. ✓
+Hier is $a=2$, $L=5$, en $f(x)=3x-1$. We moeten voor elke $\varepsilon$ een bijpassende $\delta$ vinden.
 
-Bij kwadratische (of hogere-graads) functies moet je vaak eerst een extra grens op $\delta$ afspreken (bijvoorbeeld $\delta \le 1$) om een factor als $|x+a|$ te kunnen begrenzen, voordat je de uiteindelijke $\delta$ kiest. Dat zie je in opgave 4.
+**Stap 1 — schrijf op wat we willen bewijzen:** we willen $|f(x)-L| < \varepsilon$, dus $|(3x-1)-5| < \varepsilon$.
+
+**Stap 2 — werk de linkerkant uit tot je $|x-a|$ ziet staan**, want dat is wat we straks met $\delta$ gaan vergelijken:
+$$|(3x-1)-5| = |3x-6| = |3(x-2)| = 3|x-2|$$
+(We hebben $3x-6$ ontbonden tot $3(x-2)$, zodat de afstand $|x-2|$ zichtbaar wordt.)
+
+**Stap 3 — vertaal de eis naar een eis op $|x-2|$:** we willen dus $3|x-2| < \varepsilon$, oftewel $|x-2| < \dfrac{\varepsilon}{3}$.
+
+**Stap 4 — kies $\delta$:** dit vertelt ons precies welke $\delta$ werkt. **Kies $\delta = \dfrac{\varepsilon}{3}$.**
+
+**Stap 5 — controleer dat het klopt** (dit is het bewijs zelf): stel dat $0 < |x-2| < \delta = \frac{\varepsilon}{3}$. Dan geldt:
+$$|(3x-1)-5| = 3|x-2| < 3\cdot\frac{\varepsilon}{3} = \varepsilon \checkmark$$
+
+Precies wat we wilden. Dus voor elke $\varepsilon>0$ hebben we een werkende $\delta$ gevonden ($\delta=\varepsilon/3$), en dat is exact wat de definitie vraagt.
+
+**Het recept dat hierin zit (en dat je in de opgaven herhaalt):**
+1. Werk $|f(x)-L|$ algebraïsch uit tot je een getal keer $|x-a|$ overhoudt.
+2. Los op welke $\delta$ (in termen van $\varepsilon$) die uitdrukking kleiner dan $\varepsilon$ maakt.
+3. Kies die $\delta$, en laat met een korte controle zien dat de implicatie klopt.
+
+Bij kwadratische (of hogere-graads) functies moet je vaak eerst een extra grens op $\delta$ afspreken (bijvoorbeeld $\delta \le 1$) om een lastige factor als $|x+a|$ te kunnen begrenzen, voordat je de uiteindelijke $\delta$ kiest — dat zie je uitgewerkt in opgave 4.
 """,
         "summary": "De formele limietdefinitie vervangt het intuïtieve 'wat gebeurt er als x naar a gaat' door een precieze uitspraak met $\\varepsilon$ en $\\delta$. Het bewijs volgt altijd hetzelfde stramien: werk $|f(x)-L|$ uit in $|x-a|$, en kies $\\delta$ zo dat de implicatie klopt.",
         "exercises": [
