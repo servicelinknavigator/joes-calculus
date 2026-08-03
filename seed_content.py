@@ -27,6 +27,7 @@ load_dotenv(override=True)
 
 from chapters_module2 import CHAPTERS_2  # noqa: E402
 from chapters_module3 import CHAPTERS_3  # noqa: E402
+from chapters_module4 import CHAPTERS_4  # noqa: E402
 
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_SERVICE_KEY = os.environ["SUPABASE_SERVICE_KEY"]
@@ -37,18 +38,9 @@ HEADERS = {
 }
 
 
-# ── Placeholder-titels voor hoofdstuk 31-47 (module_id, chapter_number, title) ──
-# (hoofdstuk 12-21 staan in chapters_module2.py, hoofdstuk 22-30 in chapters_module3.py)
+# ── Placeholder-titels voor hoofdstuk 40-47 (module_id, chapter_number, title) ──
+# (hoofdstuk 12-21 in chapters_module2.py, 22-30 in chapters_module3.py, 31-39 in chapters_module4.py)
 PLACEHOLDER_CHAPTERS = [
-    (4, 31, "Vectoren en vectorruimten"),
-    (4, 32, "Matrices en bewerkingen"),
-    (4, 33, "Stelsels lineaire vergelijkingen, Gauss-eliminatie"),
-    (4, 34, "Determinanten"),
-    (4, 35, "Basis, dimensie en rang"),
-    (4, 36, "Lineaire afbeeldingen"),
-    (4, 37, "Eigenwaarden en eigenvectoren"),
-    (4, 38, "Diagonaliseren"),
-    (4, 39, "Inproductruimten en orthogonaliteit"),
     (5, 40, "Eerste-orde ODE's: scheiden van variabelen"),
     (5, 41, "Eerste-orde lineaire ODE's"),
     (5, 42, "Exacte vergelijkingen"),
@@ -1241,7 +1233,7 @@ def replace_exercises(chapter_id, exercises):
     r.raise_for_status()
 
 
-ALL_CHAPTERS = CHAPTERS + CHAPTERS_2 + CHAPTERS_3
+ALL_CHAPTERS = CHAPTERS + CHAPTERS_2 + CHAPTERS_3 + CHAPTERS_4
 
 
 def main():
