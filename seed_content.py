@@ -213,20 +213,52 @@ Kies dus $\delta = \min(1, \varepsilon/9)$.
         "chapter_number": 2,
         "title": "Continuïteit en de tussenwaardestelling",
         "theory_content": r"""
-Een functie $f$ is **continu in $a$** als drie dingen kloppen: $f(a)$ bestaat, $\lim_{x\to a} f(x)$ bestaat, en beide zijn aan elkaar gelijk:
+### Wat je al weet
+
+In vorige hoofdstuk heb je limieten precies leren definiëren: $\lim_{x\to a} f(x) = L$ betekent dat je voor elke gevraagde nauwkeurigheid een marge rond $a$ kunt garanderen. Continuïteit bouwt daar direct op voort.
+
+### Teken de grafiek zonder je pen op te tillen
+
+Stel je tekent de grafiek van een functie met een pen, zonder ooit de pen van het papier te halen. Dat is de intuïtie achter "continu": geen gaten, geen sprongen, geen plekken waar de grafiek plotseling ergens anders opduikt.
+
+Maar wanneer moet je precies je pen optillen? Bekijk drie situaties bij een punt $x=a$:
+
+1. De functie is daar simpelweg niet gedefinieerd (bijvoorbeeld een breuk die daar $0$ in de noemer geeft): je kunt er niet doorheen tekenen, dus je moet de pen optillen.
+2. De grafiek "springt" van de ene hoogte naar de andere (denk aan een trapfunctie): ook hier moet de pen omhoog.
+3. Er zit een "gaatje": de grafiek nadert netjes een bepaalde hoogte, maar precies in dat ene punt zit de functiewaarde ergens anders (of ontbreekt hij): ook dan kun je niet doortekenen.
+
+In al deze drie gevallen is er een conflict tussen "waar de grafiek naartoe beweegt" (de limiet) en "waar de functie daadwerkelijk zit" (de functiewaarde). Continuïteit in $a$ betekent precies dat dit conflict er niet is.
+
+### De formele definitie
+
+Een functie $f$ is **continu in $a$** als alle drie deze dingen kloppen:
+
+1. $f(a)$ bestaat (er is een functiewaarde),
+2. $\lim_{x\to a} f(x)$ bestaat (de grafiek nadert een eenduidige hoogte),
+3. en beide zijn aan elkaar gelijk:
 $$\lim_{x \to a} f(x) = f(a)$$
 
-Is één van die drie voorwaarden niet vervuld, dan is $f$ discontinu (niet continu) in $a$. Er zijn grofweg drie soorten discontinuïteit:
+Is één van die drie voorwaarden niet vervuld, dan is $f$ discontinu (niet continu) in $a$. Dit levert drie soorten discontinuïteit op, corresponderend met de drie situaties hierboven:
 
-- **Ophefbaar (removable):** de limiet bestaat wel, maar is niet gelijk aan $f(a)$, of $f(a)$ bestaat niet. Voorbeeld: $f(x) = \frac{x^2-1}{x-1}$ in $x=1$ (de factor $(x-1)$ valt weg, maar $f(1)$ is niet gedefinieerd).
-- **Sprong (jump):** linker- en rechterlimiet bestaan, maar zijn ongelijk.
-- **Oneindig (infinite):** de functie gaat naar $\pm\infty$, zoals $f(x)=1/x$ in $x=0$.
+- **Ophefbaar (removable):** de limiet bestaat wel, maar is niet gelijk aan $f(a)$, of $f(a)$ bestaat niet ("het gaatje"). Voorbeeld: $f(x) = \frac{x^2-1}{x-1}$ in $x=1$ (de factor $(x-1)$ valt bij het vereenvoudigen weg, maar $f(1)$ zelf is niet gedefinieerd, delen door 0).
+- **Sprong (jump):** linker- en rechterlimiet bestaan allebei, maar zijn ongelijk aan elkaar.
+- **Oneindig (infinite):** de functie schiet weg naar $\pm\infty$, zoals $f(x)=1/x$ in $x=0$.
 
-**Tussenwaardestelling (TWS).** Als $f$ continu is op $[a,b]$ en $y$ ligt tussen $f(a)$ en $f(b)$, dan bestaat er een $c \in [a,b]$ met $f(c) = y$. Een veelgebruikte toepassing: als $f(a)$ en $f(b)$ tegengesteld teken hebben, dan heeft $f$ minstens één nulpunt tussen $a$ en $b$.
+### De tussenwaardestelling: een rivier oversteken
+
+Stel je loopt van de ene oever van een ondiepe rivier naar de andere, dwars door het water. Aan de startoever staat het water bij je enkels, aan de andere oever ben je weer droog. Ergens onderweg moet er dan een moment zijn geweest waarop het water precies kniehoogte had, hoe grillig de rivierbodem ook is, je kunt die diepte onmogelijk overslaan zonder er even doorheen te lopen.
+
+Dat is de **tussenwaardestelling (TWS)**: als een continue functie $f$ op $[a,b]$ de waarde $f(a)$ aanneemt aan het begin en $f(b)$ aan het eind, dan neemt hij onderweg **elke** waarde tussen $f(a)$ en $f(b)$ minstens één keer aan. Formeel: als $y$ ligt tussen $f(a)$ en $f(b)$, dan bestaat er een $c \in [a,b]$ met $f(c) = y$.
+
+**Handige toepassing:** als $f(a)$ negatief is en $f(b)$ positief (of andersom), dan moet $f$ ergens tussen $a$ en $b$ door $0$ heen, dus heeft $f$ daar een nulpunt. Zo kun je het bestaan van een oplossing bewijzen zonder hem uit te rekenen.
 
 **Voorbeeld.** Toon aan dat $f(x) = x^3 - x - 1$ een nulpunt heeft tussen $x=1$ en $x=2$.
 
-$f$ is een polynoom, dus overal continu. $f(1) = 1-1-1 = -1 < 0$ en $f(2) = 8-2-1 = 5 > 0$. Omdat $f(1)$ en $f(2)$ tegengesteld teken hebben, is er volgens de TWS een $c \in (1,2)$ met $f(c)=0$.
+**Stap 1.** Controleer dat $f$ continu is: $f$ is een polynoom (som van machten van $x$), en polynomen zijn overal continu, dus de TWS mag toegepast worden.
+
+**Stap 2.** Bereken de functiewaarden aan de randen: $f(1) = 1-1-1 = -1 < 0$ en $f(2) = 8-2-1 = 5 > 0$.
+
+**Stap 3.** Trek de conclusie: omdat $f(1)$ en $f(2)$ tegengesteld teken hebben, en $f$ continu is op $[1,2]$, garandeert de TWS een $c \in (1,2)$ met $f(c)=0$. Dat is precies een nulpunt tussen $1$ en $2$.
 """,
         "summary": "Continuïteit betekent dat limiet en functiewaarde overeenkomen. De tussenwaardestelling gebruikt continuïteit om het bestaan van oplossingen aan te tonen zonder ze expliciet te berekenen, met name handig voor nulpunten.",
         "exercises": [
@@ -276,19 +308,46 @@ Voor $g(x)=1/x$: als $x\to0^+$ gaat $g(x)\to+\infty$, als $x\to0^-$ gaat $g(x)\t
         "chapter_number": 3,
         "title": "De afgeleide: definitie via het differentiequotiënt",
         "theory_content": r"""
-De afgeleide van $f$ in een punt $x$ is de helling van de raaklijn aan de grafiek in dat punt. Formeel is dit een limiet van een differentiequotiënt:
+### Wat je al weet
+
+Uit VWO B ken je de richtingscoëfficiënt (helling) van een **rechte lijn**: hoeveel $y$ stijgt of daalt per stap van $1$ in $x$. Voor een rechte lijn is dat overal hetzelfde getal.
+
+### Maar wat is de helling van een kromme lijn?
+
+Bij een kromme grafiek is dat lastiger: de helling verandert continu van punt tot punt. Wat betekent "de helling in één specifiek punt" eigenlijk?
+
+Pak twee punten op de grafiek van $f$: het punt $(x, f(x))$ en een tweede punt daar vlak naast, $(x+h, f(x+h))$, waarbij $h$ een klein stapje is. De lijn door die twee punten (een **secans**) heeft wél een gewone, berekenbare richtingscoëfficiënt:
+$$\text{helling secans} = \frac{f(x+h) - f(x)}{(x+h) - x} = \frac{f(x+h) - f(x)}{h}$$
+
+Dit heet het **differentiequotiënt**. Het is niet de helling in het punt zelf, maar een goede benadering ervan, over een klein stukje $h$.
+
+Nu het idee: laat $h$ steeds kleiner worden, richting $0$. Het tweede punt kruipt dan steeds dichter naar het eerste punt toe, en de secans draait mee totdat hij samenvalt met de **raaklijn**, de lijn die de grafiek precies in dat ene punt raakt. De helling van die raaklijn is wat we de **afgeleide** noemen.
+
+### De formele definitie
 
 $$f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
 
-Dit differentiequotiënt is de richtingscoëfficiënt van de lijn door $(x, f(x))$ en $(x+h, f(x+h))$: een **secans**. Als $h \to 0$, nadert de secans de **raaklijn**.
+Dit is exact het idee van hierboven, nu als limiet: de helling van de secans terwijl $h \to 0$. Merk op dat dit een limiet is zoals je in hoofdstuk 1 hebt geleerd, met dezelfde soort $\varepsilon$-$\delta$-precisie eronder, al werk je in de praktijk meestal met algebraïsche technieken in plaats van de formele definitie zelf.
 
-**Voorbeeld.** Bepaal met de definitie de afgeleide van $f(x) = x^2$.
+**Notatie:** $f'(x)$, $\frac{dy}{dx}$, en $\frac{d}{dx}f(x)$ betekenen allemaal hetzelfde: de afgeleide van $f$ naar $x$.
 
-$$f'(x) = \lim_{h\to0} \frac{(x+h)^2 - x^2}{h} = \lim_{h\to0} \frac{x^2+2xh+h^2-x^2}{h} = \lim_{h\to0} \frac{2xh+h^2}{h} = \lim_{h\to0} (2x+h) = 2x$$
+### Een volledig uitgewerkt voorbeeld
 
-Dit bevestigt de bekende regel $\frac{d}{dx}x^2 = 2x$, maar nu volledig vanuit de definitie afgeleid.
+**Bepaal met de definitie de afgeleide van $f(x) = x^2$.**
 
-**Notatie:** $f'(x)$, $\frac{dy}{dx}$, en $\frac{d}{dx}f(x)$ betekenen allemaal hetzelfde.
+**Stap 1.** Schrijf het differentiequotiënt op met $f(x)=x^2$:
+$$f'(x) = \lim_{h\to0} \frac{(x+h)^2 - x^2}{h}$$
+
+**Stap 2.** Werk de teller uit: $(x+h)^2 = x^2 + 2xh + h^2$, dus de teller wordt $x^2+2xh+h^2-x^2 = 2xh+h^2$.
+$$f'(x) = \lim_{h\to0} \frac{2xh+h^2}{h}$$
+
+**Stap 3.** Deel $h$ weg uit teller en noemer (mag, want we kijken naar $h \to 0$, niet naar $h=0$ zelf, dus $h \ne 0$):
+$$f'(x) = \lim_{h\to0} (2x+h)$$
+
+**Stap 4.** Laat nu $h \to 0$: de term $h$ verdwijnt, en er blijft over:
+$$f'(x) = 2x$$
+
+Dit bevestigt de bekende regel $\frac{d}{dx}x^2 = 2x$ die je in het volgende hoofdstuk als kant-en-klare regel gaat gebruiken, maar nu heb je 'm zelf, volledig vanuit de definitie, afgeleid.
 """,
         "summary": "De afgeleide is een limiet van een differentiequotiënt: de helling van de secans terwijl de twee punten naar elkaar toe kruipen, tot je de helling van de raaklijn overhoudt.",
         "exercises": [
@@ -357,7 +416,26 @@ Omdat linker- en rechterlimiet niet gelijk zijn ($-1 \ne 1$), bestaat $\lim_{h\t
         "chapter_number": 4,
         "title": "Differentiatieregels en de kettingregel",
         "theory_content": r"""
-In plaats van elke keer de definitie te gebruiken, werk je in de praktijk met regels:
+### Wat je al weet
+
+In het vorige hoofdstuk heb je gezien dat het bepalen van een afgeleide via de definitie (met de limiet van het differentiequotiënt) nogal wat werk is, zelfs voor een simpele functie als $x^2$. Voor iets als $\sin(x^3)e^{2x}$ zou dat vrijwel onwerkbaar worden. Daarom bestaan er kant-en-klare regels, ooit met de definitie bewezen, die je nu gewoon mag toepassen.
+
+### Som- en productregel: vrij intuïtief
+
+Als je twee functies optelt, tel je gewoon hun afgeleiden op: $(f+g)' = f' + g'$. Dat volgt direct uit de definitie (een limiet van een som is de som van de limieten).
+
+Bij een product ligt het subtieler: $(fg)' \ne f'g'$. In plaats daarvan geldt de **productregel:** $(fg)' = f'g + fg'$, beide functies "krijgen om de beurt de beurt om te veranderen", terwijl de ander even vastgehouden wordt.
+
+### De kettingregel: de lastigste, dus met een concreet voorbeeld
+
+Stel je fietst, en je snelheid hangt af van hoe uitgerust je bent, en hoe uitgerust je bent hangt weer af van de tijd sinds je wakker werd. Als je conditie twee keer zo snel achteruitgaat naarmate de tijd verstrijkt, én je snelheid daardoor drie keer zo gevoelig is voor je conditie, dan verandert je snelheid per saldo $2 \times 3 = 6$ keer zo snel ten opzichte van de tijd. Veranderingssnelheden die na elkaar inwerken, vermenigvuldig je.
+
+Dat is precies wat er gebeurt bij een **samengestelde functie** $y = f(g(x))$: eerst zet $g$ de $x$ om in een tussenwaarde, daarna zet $f$ die tussenwaarde om in de uiteindelijke uitkomst. De **kettingregel** zegt dat de totale veranderingssnelheid het product is van de twee afzonderlijke veranderingssnelheden:
+$$y' = f'(g(x)) \cdot g'(x)$$
+
+In woorden: neem de afgeleide van de buitenfunctie $f$, maar vul daar (nog steeds) de binnenfunctie $g(x)$ in, en vermenigvuldig dat met de afgeleide van de binnenfunctie zelf.
+
+### Overzicht van de regels
 
 - **Somregel:** $(f+g)' = f' + g'$
 - **Productregel:** $(fg)' = f'g + fg'$
@@ -366,13 +444,17 @@ In plaats van elke keer de definitie te gebruiken, werk je in de praktijk met re
 
 Standaardafgeleiden (bekend uit VWO B): $\frac{d}{dx}x^n = nx^{n-1}$, $\frac{d}{dx}e^x = e^x$, $\frac{d}{dx}\ln x = \frac{1}{x}$, $\frac{d}{dx}\sin x = \cos x$, $\frac{d}{dx}\cos x = -\sin x$.
 
-**Voorbeeld (kettingregel).** Differentieer $f(x) = \sin(x^2)$.
+### Twee volledig uitgewerkte voorbeelden
 
-Zie dit als "buitenfunctie $\sin(\cdot)$ om binnenfunctie $x^2$": $f'(x) = \cos(x^2)\cdot 2x$.
+**Voorbeeld 1 (kettingregel).** Differentieer $f(x) = \sin(x^2)$.
 
-**Voorbeeld (productregel + kettingregel).** Differentieer $f(x) = x^2 e^{3x}$.
+Herken de opbouw: de buitenfunctie is $\sin(\cdot)$, de binnenfunctie is $x^2$. De afgeleide van de buitenfunctie is $\cos(\cdot)$, met de binnenfunctie er weer ingevuld: $\cos(x^2)$. De afgeleide van de binnenfunctie $x^2$ is $2x$. Vermenigvuldig:
+$$f'(x) = \cos(x^2)\cdot 2x$$
 
-$f'(x) = 2x\cdot e^{3x} + x^2 \cdot e^{3x}\cdot 3 = e^{3x}(2x+3x^2)$.
+**Voorbeeld 2 (productregel + kettingregel).** Differentieer $f(x) = x^2 e^{3x}$.
+
+Dit is een product van $x^2$ en $e^{3x}$, dus productregel: $(fg)'=f'g+fg'$. Voor het tweede deel, $e^{3x}$, heb je zelf de kettingregel nodig (buitenfunctie $e^{(\cdot)}$, binnenfunctie $3x$ met afgeleide $3$):
+$$f'(x) = 2x\cdot e^{3x} + x^2 \cdot (e^{3x}\cdot 3) = e^{3x}(2x+3x^2)$$
 """,
         "summary": "De kettingregel is de belangrijkste nieuwe techniek: buitenafgeleide (in de binnenfunctie ingevuld) keer binnenafgeleide. Combineer met som-, product- en quotiëntregel voor complexere functies.",
         "exercises": [
@@ -428,18 +510,41 @@ $$f'(x) = 2x\,e^{x^2}\ln(x) + e^{x^2}\cdot\frac{1}{x} = e^{x^2}\left(2x\ln(x) + 
         "chapter_number": 5,
         "title": "Impliciet differentiëren en gerelateerde snelheden",
         "theory_content": r"""
-Niet elk verband tussen $x$ en $y$ is expliciet als $y=f(x)$ te schrijven (denk aan een cirkel: $x^2+y^2=25$). Bij **impliciet differentiëren** differentieer je beide kanten van de vergelijking naar $x$, waarbij je $y$ behandelt als een functie van $x$ (dus telkens de kettingregel toepassen op termen met $y$, met een factor $\frac{dy}{dx}$).
+### Wat je al weet
+
+Tot nu toe had je altijd een expliciete formule $y = f(x)$: $y$ helemaal alleen aan één kant, uitgedrukt in $x$. Daar kon je gewoon op differentiëren met de regels uit het vorige hoofdstuk.
+
+### Wat als je y niet kunt vrijmaken?
+
+Neem de vergelijking van een cirkel: $x^2+y^2=25$. Je zou $y$ kunnen oplossen ($y=\pm\sqrt{25-x^2}$), maar dat plusteken en minteken zijn onhandig (het is dan eigenlijk twee functies, de boven- en onderkant van de cirkel). Bij ingewikkeldere vergelijkingen, zoals $x^3+y^3=6xy$, lukt vrijmaken van $y$ soms helemaal niet.
+
+Toch heeft de cirkel op elk punt (behalve links en rechts) gewoon een duidelijke raaklijn met een duidelijke helling. Die helling moet je dus ook kunnen berekenen zonder eerst $y$ expliciet te maken. Dat heet **impliciet differentiëren**.
+
+### Het idee: y is stiekem toch een functie van x
+
+Ook al staat het er niet met zoveel woorden, op elk stukje van de cirkel hangt $y$ af van $x$: verander je $x$ een klein beetje, dan verandert $y$ mee (volgens de vergelijking). Je mag dus doen alsof $y = y(x)$, een verborgen functie van $x$, en beide kanten van de vergelijking naar $x$ differentiëren. Het enige addertje: telkens als je een term met $y$ tegenkomt, moet je de kettingregel gebruiken, want je differentieert eigenlijk "iets met $y(x)$" naar $x$. Dat levert steeds een extra factor $\frac{dy}{dx}$ op. Bijvoorbeeld: $\frac{d}{dx}(y^2) = 2y\cdot\frac{dy}{dx}$, net als bij $\frac{d}{dx}(g(x))^2 = 2g(x)\cdot g'(x)$ in het vorige hoofdstuk, maar dan met $g=y$.
 
 **Voorbeeld.** Bepaal $\frac{dy}{dx}$ voor $x^2+y^2=25$.
 
-Differentieer beide kanten naar $x$:
-$$2x + 2y\frac{dy}{dx} = 0 \implies \frac{dy}{dx} = -\frac{x}{y}$$
+**Stap 1.** Differentieer beide kanten naar $x$. Links: $\frac{d}{dx}(x^2) = 2x$, en $\frac{d}{dx}(y^2) = 2y\frac{dy}{dx}$ (kettingregel). Rechts: $\frac{d}{dx}(25)=0$ (een constante verandert niet).
+$$2x + 2y\frac{dy}{dx} = 0$$
 
-**Gerelateerde snelheden** gebruiken dezelfde techniek, maar dan met de tijd $t$ als variabele: je differentieert een vergelijking tussen grootheden naar $t$, waarbij elke grootheid een eigen "snelheid" (afgeleide naar $t$) heeft.
+**Stap 2.** Los op naar $\frac{dy}{dx}$:
+$$\frac{dy}{dx} = -\frac{x}{y}$$
+
+### Gerelateerde snelheden: dezelfde truc, maar met de tijd
+
+Bij **gerelateerde snelheden** gebruik je precies dezelfde impliciete techniek, maar nu differentieer je naar de tijd $t$ in plaats van naar $x$. Het scenario: twee (of meer) grootheden zijn aan elkaar gekoppeld via een vergelijking, en beide veranderen in de tijd. Ken je de veranderingssnelheid van de één, dan kun je via de vergelijking de veranderingssnelheid van de ander vinden, ook al ken je op geen enkel moment de expliciete formule van de één in termen van de tijd.
 
 **Voorbeeld.** Een cirkelvormige olievlek breidt uit; de straal $r$ groeit met $2$ m/min. Hoe snel groeit de oppervlakte $A$ als $r=5$ m?
 
-$A = \pi r^2$. Differentieer naar $t$: $\frac{dA}{dt} = 2\pi r \frac{dr}{dt}$. Invullen: $\frac{dA}{dt} = 2\pi(5)(2) = 20\pi \approx 62{,}8$ m²/min.
+**Stap 1.** Leg het verband tussen de grootheden vast: $A = \pi r^2$ (de bekende oppervlakteformule van een cirkel).
+
+**Stap 2.** Differentieer beide kanten naar $t$, met de kettingregel voor $r^2$ (want $r$ hangt af van $t$):
+$$\frac{dA}{dt} = 2\pi r \frac{dr}{dt}$$
+
+**Stap 3.** Vul de gegeven waarden in: $r=5$ en $\frac{dr}{dt}=2$.
+$$\frac{dA}{dt} = 2\pi(5)(2) = 20\pi \approx 62{,}8 \text{ m}^2/\text{min}$$
 """,
         "summary": "Impliciet differentiëren: differentieer beide kanten naar $x$ en gebruik de kettingregel op elke $y$-term (levert een factor $dy/dx$ op). Gerelateerde snelheden: dezelfde aanpak maar differentiëren naar $t$, met bekende en gevraagde snelheden als $\\frac{d(\\cdot)}{dt}$.",
         "exercises": [
@@ -506,17 +611,45 @@ De top zakt dus met $0{,}75$ m/s (het minteken geeft aan dat $y$ afneemt).""",
         "chapter_number": 6,
         "title": "Extrema, de middelwaardestelling en krommeonderzoek",
         "theory_content": r"""
-Een **kritiek punt** van $f$ is een $x$-waarde waar $f'(x)=0$ of $f'(x)$ niet bestaat. Kandidaten voor lokale extrema liggen altijd bij kritieke punten.
+### Wat je al weet
 
-**Eerste-afgeleide-test:** verandert $f'$ van teken bij een kritiek punt (van $+$ naar $-$: lokaal maximum; van $-$ naar $+$: lokaal minimum)?
+Begrippen als top, dal, minimum en maximum ken je al uit VWO B: een top is een punt waar de grafiek van stijgen naar dalen overgaat (of andersom voor een dal). Wat nieuw is: hoe je dat met de afgeleide (in plaats van met de grafische rekenmachine) exact opspoort en onderbouwt.
 
-**Middelwaardestelling (MWS):** als $f$ continu is op $[a,b]$ en differentieerbaar op $(a,b)$, dan bestaat er een $c\in(a,b)$ met
+### Waar kunnen extrema zitten?
+
+In een top of dal is de raaklijn horizontal: de grafiek "kantelt" daar precies van stijgend naar dalend (of andersom), en op dat omslagpunt is de helling nul. Dat geeft een simpel opsporingsrecept: zoek de plekken waar $f'(x)=0$ (of waar $f'$ niet bestaat, zoals bij een scherpe knik). Zo'n plek heet een **kritiek punt**. Let op: niet elk kritiek punt is automatisch een top of dal (denk aan een "zadel" waar de grafiek na een vlak stukje toch blijft stijgen), dus je moet nog controleren wat voor soort punt het echt is.
+
+**Eerste-afgeleide-test:** kijk naar het teken van $f'$ links en rechts van een kritiek punt.
+- Van $+$ (stijgend) naar $-$ (dalend): een lokaal **maximum**, de top van een berg.
+- Van $-$ (dalend) naar $+$ (stijgend): een lokaal **minimum**, de bodem van een dal.
+- Geen tekenwisseling: geen extreem, gewoon een moment van "pauzeren" tijdens het stijgen of dalen.
+
+### De middelwaardestelling: je snelheidsmeter tijdens een autorit
+
+Stel je rijdt van A naar B, een rit van 160 km die precies 2 uur duurt. Je gemiddelde snelheid over de hele rit was dus 80 km/u. Betekent dat dat je op enig moment ook echt precies 80 km/u hebt gereden? Ja, dat moet wel: als je de hele rit langzamer dan 80 had gereden, was je nooit op tijd geweest, en als je de hele rit sneller dan 80 had gereden, was je te vroeg geweest. Ergens onderweg moet je snelheidsmeter dus exact door de 80 heen zijn gegaan.
+
+Dat is de **middelwaardestelling (MWS)**: als $f$ continu is op $[a,b]$ en differentieerbaar op $(a,b)$, dan bestaat er een $c\in(a,b)$ waar de **lokale** veranderingssnelheid gelijk is aan de **gemiddelde** veranderingssnelheid over het hele interval:
 $$f'(c) = \frac{f(b)-f(a)}{b-a}$$
-Meetkundig: ergens tussen $a$ en $b$ is de raaklijn evenwijdig aan de lijn door $(a,f(a))$ en $(b,f(b))$.
+Meetkundig: ergens tussen $a$ en $b$ is de raaklijn evenwijdig aan de rechte lijn door de eindpunten $(a,f(a))$ en $(b,f(b))$ van de grafiek.
 
-**Tweede afgeleide en concaviteit:** $f''(x)>0$ betekent hol/convex (kromme "houdt water vast"), $f''(x)<0$ betekent bol/concaaf. Een **buigpunt** is waar $f''$ van teken wisselt.
+### De tweede afgeleide: hoe de helling zelf verandert
 
-**Voorbeeld: krommeonderzoek van $f(x)=x^3-3x$.** $f'(x)=3x^2-3=0 \Rightarrow x=\pm1$. $f'$ is positief buiten $[-1,1]$, negatief erbinnen: lokaal maximum in $x=-1$ ($f(-1)=2$), lokaal minimum in $x=1$ ($f(1)=-2$). $f''(x)=6x=0 \Rightarrow x=0$: buigpunt in $(0,0)$.
+De afgeleide $f'$ vertelt je of $f$ stijgt of daalt. De **tweede afgeleide** $f''$ (de afgeleide van de afgeleide) vertelt je iets subtielers: hoe de helling zelf verandert, oftewel de **concaviteit** van de grafiek.
+
+- $f''(x)>0$: de helling wordt steeds groter (of minder negatief), de grafiek buigt naar boven, zoals de binnenkant van een schaal ("houdt water vast"): dit heet **hol** of **convex**.
+- $f''(x)<0$: de helling wordt steeds kleiner, de grafiek buigt naar beneden, als de buitenkant van een koepel: dit heet **bol** of **concaaf**.
+
+Een **buigpunt** is een plek waar de concaviteit omslaat, dus waar $f''$ van teken wisselt.
+
+### Een volledig krommeonderzoek
+
+**Onderzoek de grafiek van $f(x)=x^3-3x$: extrema en buigpunten.**
+
+**Stap 1 (kritieke punten):** $f'(x)=3x^2-3=0 \Rightarrow x^2=1 \Rightarrow x=\pm1$.
+
+**Stap 2 (soort extremum bepalen):** teken van $f'$: voor $x<-1$ is $f'>0$ (want bijvoorbeeld $f'(-2)=9>0$), tussen $-1$ en $1$ is $f'<0$ (bijvoorbeeld $f'(0)=-3<0$), voor $x>1$ is $f'>0$ weer. Dus: van $+$ naar $-$ bij $x=-1$ (lokaal maximum, $f(-1)=2$), van $-$ naar $+$ bij $x=1$ (lokaal minimum, $f(1)=-2$).
+
+**Stap 3 (buigpunt):** $f''(x)=6x=0 \Rightarrow x=0$. Voor $x<0$ is $f''<0$ (bol), voor $x>0$ is $f''>0$ (hol): de concaviteit wisselt echt, dus $(0,0)$ is een buigpunt.
 """,
         "summary": "Kritieke punten ($f'=0$) zijn kandidaten voor extrema; de eerste-afgeleide-test bepaalt of het een maximum of minimum is. De tweede afgeleide vertelt iets over concaviteit en buigpunten. De MWS garandeert een punt waar de raaklijn evenwijdig loopt aan de verbindingslijn tussen de eindpunten.",
         "exercises": [
@@ -589,15 +722,34 @@ $\Rightarrow$ buigpunt in $(1, f(1)) = (1,-2)$.
         "chapter_number": 7,
         "title": "De regel van De l'Hôpital",
         "theory_content": r"""
-Sommige limieten geven bij directe substitutie een **onbepaalde vorm**: $\frac{0}{0}$ of $\frac{\infty}{\infty}$. De regel van De l'Hôpital zegt: als $\lim_{x\to a}\frac{f(x)}{g(x)}$ zo'n onbepaalde vorm oplevert, en $f,g$ zijn differentieerbaar rond $a$, dan geldt (mits het rechterlid bestaat):
+### Wat je al weet
 
+In hoofdstuk 1 kwam je $\lim_{x\to3}\frac{x^2-9}{x-3}$ tegen: invullen gaf $\frac00$, maar door te ontbinden ($x^2-9=(x-3)(x+3)$) kon je de storende factor wegdelen en alsnog het antwoord vinden.
+
+### Wanneer die truc niet werkt
+
+Bekijk nu $\lim_{x\to0}\frac{\sin(x)}{x}$. Invullen geeft weer $\frac{\sin(0)}{0} = \frac00$, dezelfde onbepaalde situatie. Maar hoe ontbind je $\sin(x)$? Dat kan niet als een product van eenvoudige factoren zoals bij een polynoom. De algebraïsche truc uit hoofdstuk 1 loopt hier vast, dus is er een nieuw gereedschap nodig.
+
+### Het idee: dichtbij $a$ lijkt elke functie op zijn raaklijn
+
+Je weet uit hoofdstuk 3 dat de afgeleide $f'(a)$ de helling van de raaklijn in $a$ is. Vlak bij $a$ liggen de grafiek van $f$ en die raaklijn vrijwel op elkaar, de raaklijn is de beste rechte-lijn-benadering van $f$ dichtbij $a$.
+
+Stel nu dat zowel $f(a)=0$ als $g(a)=0$ (de $\frac00$-situatie). Vlak bij $a$ gedraagt $f(x)$ zich dus ongeveer als de rechte lijn met helling $f'(a)$ door het punt $(a,0)$, dus $f(x) \approx f'(a)\cdot(x-a)$. Hetzelfde geldt voor $g$: $g(x) \approx g'(a)\cdot(x-a)$. Vul dat in bij het quotiënt:
+$$\frac{f(x)}{g(x)} \approx \frac{f'(a)(x-a)}{g'(a)(x-a)} = \frac{f'(a)}{g'(a)}$$
+De factor $(x-a)$ valt weg. Dat is precies de intuïtie achter de regel van De l'Hôpital: bij een $\frac00$-botsing mag je teller en noemer allebei vervangen door hun afgeleiden.
+
+### De formele regel
+
+Als $\lim_{x\to a}\frac{f(x)}{g(x)}$ een **onbepaalde vorm** oplevert, $\frac{0}{0}$ of $\frac{\infty}{\infty}$, en $f,g$ zijn differentieerbaar rond $a$, dan geldt (mits het rechterlid bestaat):
 $$\lim_{x\to a}\frac{f(x)}{g(x)} = \lim_{x\to a}\frac{f'(x)}{g'(x)}$$
 
-**Let op:** controleer bij elke stap opnieuw of je écht een onbepaalde vorm hebt, anders mag je de regel niet toepassen.
+**Let op:** controleer vóór elke toepassing opnieuw of je écht een onbepaalde vorm hebt. Is dat niet zo, dan mag je de regel niet toepassen, en geeft gewoon invullen het antwoord.
 
-**Voorbeeld.** $\lim_{x\to0}\frac{\sin x}{x}$. Invullen geeft $\frac{0}{0}$. De l'Hôpital: $\lim_{x\to0}\frac{\cos x}{1} = \cos(0)=1$.
+**Voorbeeld.** $\lim_{x\to0}\frac{\sin x}{x}$. Invullen geeft $\frac{0}{0}$, dus De l'Hôpital mag: $\lim_{x\to0}\frac{\cos x}{1} = \cos(0)=1$.
 
-**Andere onbepaalde vormen** ($0\cdot\infty$, $\infty-\infty$, $1^\infty$, $0^0$, $\infty^0$) kun je vaak herschrijven tot $\frac{0}{0}$ of $\frac{\infty}{\infty}$ om de regel toch toe te kunnen passen. Bijvoorbeeld $x\ln x$ (vorm $0\cdot\infty$ als $x\to0^+$) herschrijf je als $\frac{\ln x}{1/x}$ (vorm $\frac{-\infty}{\infty}$).
+### Andere onbepaalde vormen
+
+Vormen als $0\cdot\infty$, $\infty-\infty$, $1^\infty$, $0^0$ en $\infty^0$ zijn geen quotiënt, dus daar kun je De l'Hôpital niet direct op loslaten. Herschrijf ze eerst algebraïsch tot een breuk die wél de vorm $\frac00$ of $\frac{\infty}{\infty}$ heeft. Bijvoorbeeld $x\ln x$ (vorm $0\cdot\infty$ als $x\to0^+$, want $x\to0$ en $\ln x \to -\infty$) herschrijf je als $\frac{\ln x}{1/x}$ (nu vorm $\frac{-\infty}{\infty}$), en dán mag De l'Hôpital toegepast worden.
 """,
         "summary": "De l'Hôpital vervangt teller en noemer door hun afgeleiden bij $0/0$- of $\\infty/\\infty$-vormen. Andere onbepaalde vormen herschrijf je eerst tot een breuk voordat je de regel toepast, en na elke toepassing controleer je opnieuw of het weer een onbepaalde vorm is.",
         "exercises": [
@@ -661,22 +813,41 @@ Dus $\lim_{x\to0^+} x\ln(x) = 0$.""",
         "chapter_number": 8,
         "title": "Optimalisatieproblemen",
         "theory_content": r"""
-Een vast recept voor optimalisatieproblemen:
+### Wat je al weet
+
+In hoofdstuk 6 heb je geleerd hoe je met $f'(x)=0$ de extrema van een gegeven functie vindt. Optimaliseren is precies datzelfde idee, maar dan omgekeerd toegepast: je krijgt een praktijksituatie ("welke afmetingen geven de grootste oppervlakte", "welke prijs geeft de meeste winst") in woorden, en jouw taak is om daar zelf eerst een functie van te maken voordat je die extrema-technieken kunt gebruiken.
+
+### Waarom heb je vaak twee variabelen in het begin?
+
+Een praktijksituatie beschrijft meestal een grootheid die van **twee** dingen tegelijk afhangt (bijvoorbeeld de oppervlakte van een rechthoek hangt af van zowel breedte als hoogte). Maar $f'(x)=0$ werkt alleen voor een functie van **één** variabele. De truc is: er zit vrijwel altijd een extra gegeven ("nevenvoorwaarde") in de opgave dat de twee variabelen aan elkaar koppelt, waarmee je er één kunt wegwerken.
+
+### Het recept
 
 1. **Model:** vertaal de situatie naar een formule voor de te optimaliseren grootheid, meestal in twee variabelen.
-2. **Nevenvoorwaarde:** gebruik een gegeven relatie om één variabele te elimineren, zodat je één functie van één variabele overhoudt.
-3. **Domein:** bepaal welke waarden praktisch zinvol zijn (bijv. lengtes $>0$).
-4. **Differentiëren:** bepaal de afgeleide en zoek kritieke punten.
-5. **Verifiëren:** controleer met de eerste- of tweede-afgeleide-test (of door randwaarden te vergelijken) dat het inderdaad een maximum/minimum is.
-6. **Interpreteren:** vertaal het wiskundige antwoord terug naar de praktijksituatie.
+2. **Nevenvoorwaarde:** gebruik het gegeven verband om één variabele uit te drukken in de andere, en vul dat in, zodat je één functie van één variabele overhoudt.
+3. **Domein:** bepaal welke waarden praktisch zinvol zijn (bijvoorbeeld lengtes moeten $>0$ zijn).
+4. **Differentiëren:** bepaal de afgeleide en zoek kritieke punten, exact zoals in hoofdstuk 6.
+5. **Verifiëren:** controleer met de eerste- of tweede-afgeleide-test (of door randwaarden te vergelijken) dat het inderdaad een maximum of minimum is, en niet zomaar een willekeurig kritiek punt.
+6. **Interpreteren:** vertaal het wiskundige antwoord terug naar de praktijksituatie (met eenheden, en in woorden wat het betekent).
 
-**Voorbeeld.** Een blik (cilinder) moet $500\text{ cm}^3$ inhoud hebben. Welke straal $r$ en hoogte $h$ minimaliseren het materiaalgebruik (totale oppervlakte)?
+### Een volledig uitgewerkt voorbeeld
 
-Inhoud: $\pi r^2 h = 500 \Rightarrow h = \frac{500}{\pi r^2}$. Oppervlakte: $S(r) = 2\pi r^2 + 2\pi r h = 2\pi r^2 + \frac{1000}{r}$.
+**Een blik (cilinder) moet $500\text{ cm}^3$ inhoud hebben. Welke straal $r$ en hoogte $h$ minimaliseren het materiaalgebruik (de totale oppervlakte)?**
 
-$S'(r) = 4\pi r - \frac{1000}{r^2} = 0 \Rightarrow r^3 = \frac{1000}{4\pi} = \frac{250}{\pi} \Rightarrow r = \sqrt[3]{250/\pi} \approx 4{,}30\text{ cm}$.
+**Stap 1 (model):** de oppervlakte van een cilinder (twee cirkels plus de zijkant) is $S = 2\pi r^2 + 2\pi r h$, een formule met twee variabelen $r$ en $h$.
 
-Dan $h = \frac{500}{\pi r^2} \approx 8{,}60$ cm.
+**Stap 2 (nevenvoorwaarde):** de inhoud ligt vast op $500\text{ cm}^3$: $\pi r^2 h = 500$, dus $h = \dfrac{500}{\pi r^2}$. Vul dit in bij $S$:
+$$S(r) = 2\pi r^2 + 2\pi r \cdot \frac{500}{\pi r^2} = 2\pi r^2 + \frac{1000}{r}$$
+Nu is $S$ nog maar een functie van de ene variabele $r$.
+
+**Stap 3 (domein):** $r>0$, want een straal kan niet negatief of nul zijn.
+
+**Stap 4 (differentiëren):**
+$$S'(r) = 4\pi r - \frac{1000}{r^2} = 0 \implies 4\pi r^3 = 1000 \implies r^3 = \frac{250}{\pi} \implies r = \sqrt[3]{250/\pi} \approx 4{,}30\text{ cm}$$
+
+**Stap 5 (verifiëren):** $S''(r) = 4\pi + \frac{2000}{r^3} > 0$ voor elke $r>0$, dus dit kritieke punt is inderdaad een minimum.
+
+**Stap 6 (interpreteren):** bij $r\approx4{,}30$ cm is $h = \frac{500}{\pi r^2} \approx 8{,}60$ cm. Dat zijn de afmetingen die het materiaalgebruik minimaliseren.
 """,
         "summary": "Optimaliseren = model opstellen, met een nevenvoorwaarde herleiden tot één variabele, differentiëren, kritieke punten zoeken, en verifiëren dat het een echt maximum/minimum is binnen het praktische domein.",
         "exercises": [
@@ -747,19 +918,41 @@ Het minimum ligt dus bij $x=\pm\sqrt{3{,}5}\approx\pm1{,}87$, met bijbehorend pu
         "chapter_number": 9,
         "title": "Riemannsommen en de hoofdstelling van de integraalrekening",
         "theory_content": r"""
-Om de oppervlakte onder een grafiek te benaderen, verdeel je het interval $[a,b]$ in $n$ even brede stroken van breedte $\Delta x = \frac{b-a}{n}$, en tel je de oppervlaktes van $n$ rechthoeken op: een **Riemannsom**. Bij een rechter-Riemannsom gebruik je de functiewaarde aan de rechterkant van elke strook:
+### Nieuw terrein
+Vanaf dit hoofdstuk verlaat je het "differentiëren"-deel van calculus (hellingen, veranderingssnelheden) en begin je aan het "integreren"-deel: oppervlaktes. Dit voelt in eerste instantie als een compleet ander onderwerp, tot de hoofdstelling verderop in dit hoofdstuk laat zien dat ze eigenlijk twee kanten van dezelfde medaille zijn.
 
+### Hoe bereken je de oppervlakte onder een kromme grafiek?
+
+Van een rechthoek of driehoek ken je de oppervlakteformule. Maar hoe pak je een gebied aan met een kromme bovenrand, zoals het gebied onder de grafiek van $f(x)=x^2$ tussen $x=0$ en $x=2$?
+
+**Het idee: benader met rechthoekjes.** Verdeel het interval $[0,2]$ in een aantal even brede stroken, en teken op elke strook een rechthoek net zo hoog als de functiewaarde (bijvoorbeeld aan de rechterkant van de strook). De oppervlaktes van die rechthoeken zijn makkelijk te berekenen, en samen benaderen ze de werkelijke oppervlakte onder de kromme. Hoe meer (dus smallere) stroken je gebruikt, hoe beter de rechthoekjes de kromme volgen, en hoe nauwkeuriger de benadering.
+
+### Dat precies maken
+
+Verdeel het interval $[a,b]$ in $n$ even brede stroken van breedte $\Delta x = \frac{b-a}{n}$. Bij een **rechter-Riemannsom** gebruik je op elke strook de functiewaarde aan de rechterkant als hoogte van het rechthoekje, en tel je alle oppervlaktes op:
 $$\sum_{i=1}^{n} f(x_i)\, \Delta x$$
 
-De **bepaalde integraal** is de limiet hiervan als $n\to\infty$ (de stroken oneindig dun worden):
+Dit heet een **Riemannsom**: een eindige som van rechthoek-oppervlaktes, die de werkelijke oppervlakte benadert.
+
+Nu hetzelfde spel als bij de limietdefinitie in hoofdstuk 1: laat $n \to \infty$ (de stroken oneindig dun en oneindig talrijk worden). De Riemannsom nadert dan een exacte waarde, en die waarde noemen we de **bepaalde integraal**:
 $$\int_a^b f(x)\,dx = \lim_{n\to\infty} \sum_{i=1}^n f(x_i)\Delta x$$
 
-**Hoofdstelling van de integraalrekening.** Als $F$ een primitieve is van $f$ (dus $F'=f$), dan:
+Het integraalteken $\int$ is zelf een uitgerekte "S" van "som", een herinnering aan waar het vandaan komt.
+
+### De hoofdstelling: het verrassende verband met differentiëren
+
+Stel je definieert een functie $F(x)$ die de (lopende) oppervlakte bijhoudt onder de grafiek van $f$, vanaf een vast startpunt $a$ tot aan een variabele $x$: $F(x) = \int_a^x f(t)\,dt$. Als $x$ een klein stukje opschuift, groeit die oppervlakte met ongeveer $f(x)$ maal dat stukje, oftewel: de **veranderingssnelheid van de opgebouwde oppervlakte is precies $f(x)$ zelf**. Met andere woorden: $F'(x) = f(x)$, dus $F$ is een **primitieve** van $f$ (een functie waarvan $f$ de afgeleide is).
+
+Dat is het fundamentele inzicht van de **hoofdstelling van de integraalrekening**: oppervlakte-opbouwen (integreren) en hellingen-bepalen (differentiëren) zijn elkaars tegenovergestelde bewerkingen, net zoals machtsverheffen en worteltrekken.
+
+Dit levert een enorme rekenkundige besparing op: in plaats van eindeloze Riemannsommen uit te rekenen, hoef je alleen een primitieve $F$ van $f$ te vinden (dus een functie terug te "raden" waarvan $f$ de afgeleide is), en dan geldt:
 $$\int_a^b f(x)\,dx = F(b) - F(a)$$
 
-Dit koppelt integreren (oppervlakte) direct aan differentiëren (het omgekeerde van een afgeleide zoeken): een fundamenteel resultaat.
+**Voorbeeld.** Bereken $\int_1^3 (2x+1)\,dx$.
 
-**Voorbeeld.** $\int_1^3 (2x+1)\,dx$. Een primitieve is $F(x) = x^2+x$. Dan $F(3)-F(1) = (9+3)-(1+1) = 12-2=10$.
+**Stap 1.** Zoek een primitieve $F$ van $f(x)=2x+1$: welke functie heeft $2x+1$ als afgeleide? Dat is $F(x) = x^2+x$ (controleer: $\frac{d}{dx}(x^2+x) = 2x+1$ ✓).
+
+**Stap 2.** Pas de hoofdstelling toe: $F(3)-F(1) = (9+3)-(1+1) = 12-2=10$.
 """,
         "summary": "Riemannsommen benaderen oppervlakte met rechthoeken; de bepaalde integraal is de limiet daarvan. De hoofdstelling maakt exact rekenen mogelijk: zoek een primitieve $F$ en bereken $F(b)-F(a)$.",
         "exercises": [
@@ -823,19 +1016,42 @@ Interpretatie: de oppervlakte onder één "boog" van de sinus tussen $0$ en $\pi
         "chapter_number": 10,
         "title": "Integratie: de substitutiemethode",
         "theory_content": r"""
-De substitutiemethode is het omgekeerde van de kettingregel. Als je een integraal ziet met een "binnenfunctie" en (op een constante na) de afgeleide daarvan, substitueer je $u = $ die binnenfunctie.
+### Wat je al weet
 
-**Stappenplan:**
-1. Kies $u$ = een geschikt deel van de integrand.
-2. Bereken $du = u'(x)\,dx$ en schrijf $dx$ hierin uit.
-3. Herschrijf de hele integraal in termen van $u$.
-4. Integreer naar $u$, en substitueer aan het eind $u$ terug in termen van $x$.
-5. **Bij een bepaalde integraal:** je kunt ook de grenzen meteen omrekenen naar $u$-grenzen, dan hoef je aan het eind niet terug te substitueren.
+In hoofdstuk 4 heb je de kettingregel geleerd: als $y=f(g(x))$, dan $y' = f'(g(x))\cdot g'(x)$, de afgeleide van de buitenfunctie (met binnenfunctie ingevuld) keer de afgeleide van de binnenfunctie. In hoofdstuk 9 heb je gezien dat integreren het omgekeerde is van differentiëren: een primitieve zoeken.
 
-**Voorbeeld.** $\int 2x(x^2+1)^4\,dx$. Kies $u=x^2+1$, dan $du = 2x\,dx$. De integraal wordt $\int u^4\,du = \frac{u^5}{5}+C = \frac{(x^2+1)^5}{5}+C$.
+### Dus: hoe herken je een "reverse kettingregel"?
 
-**Voorbeeld (bepaalde integraal, grenzen omrekenen).** $\int_0^1 x\,e^{x^2}\,dx$. Kies $u=x^2$, $du=2x\,dx$, dus $x\,dx = \frac{1}{2}du$. Grenzen: $x=0\Rightarrow u=0$; $x=1\Rightarrow u=1$.
+Als differentiëren van een samengestelde functie een extra factor $g'(x)$ oplevert (dankzij de kettingregel), dan moet integreren van zo'n uitkomst die factor $g'(x)$ juist weer "opeten". Herken je dus in een integrand een binnenfunctie én (op een constante factor na) de afgeleide van die binnenfunctie ergens los erbij staan, dan is de kans groot dat je met de kettingregel achteruit te maken hebt.
+
+Bekijk bijvoorbeeld $\int 2x(x^2+1)^4\,dx$: hierin zit $x^2+1$ als "binnenfunctie", en $2x$ is precies de afgeleide daarvan. Dat is het signaal om **substitutie** te gebruiken: je vervangt de binnenfunctie tijdelijk door een nieuwe letter $u$, waardoor de hele integraal simpeler wordt.
+
+### Het stappenplan
+
+1. **Kies $u$** = de binnenfunctie (het deel van de integrand waarvan de afgeleide, op een constante na, ook aanwezig is).
+2. **Bereken $du$**: differentieer $u$ naar $x$, dus $du = u'(x)\,dx$, en schrijf dit om zodat je $dx$ (of een stuk van de integrand) kunt vervangen.
+3. **Herschrijf** de hele integraal volledig in termen van $u$, er mag geen $x$ meer in overblijven.
+4. **Integreer** naar $u$ (vaak een simpele standaardintegraal), en substitueer aan het eind $u$ terug in termen van $x$.
+5. **Bij een bepaalde integraal** kun je ook meteen de grenzen omrekenen naar $u$-grenzen, dan hoef je aan het eind niet terug te substitueren.
+
+### Twee volledig uitgewerkte voorbeelden
+
+**Voorbeeld 1.** Bereken $\int 2x(x^2+1)^4\,dx$.
+
+**Stap 1.** Kies $u=x^2+1$ (de binnenfunctie onder de macht).
+**Stap 2.** $du = 2x\,dx$, en die $2x\,dx$ staat toevallig precies zo in de integraal.
+**Stap 3.** Vervang: de integraal wordt $\int u^4\,du$.
+**Stap 4.** Integreer: $\int u^4\,du = \frac{u^5}{5}+C$, en substitueer $u=x^2+1$ terug:
+$$\int 2x(x^2+1)^4\,dx = \frac{(x^2+1)^5}{5}+C$$
+
+**Voorbeeld 2 (bepaalde integraal, grenzen omrekenen).** Bereken $\int_0^1 x\,e^{x^2}\,dx$.
+
+**Stap 1.** Kies $u=x^2$ (de binnenfunctie in de exponent).
+**Stap 2.** $du=2x\,dx$, dus $x\,dx = \frac{1}{2}du$.
+**Stap 3.** Reken de grenzen meteen om: $x=0 \Rightarrow u=0$; $x=1 \Rightarrow u=1$.
+**Stap 4.** Herschrijven en integreren:
 $$\int_0^1 x e^{x^2}dx = \frac12\int_0^1 e^u\,du = \frac12\left[e^u\right]_0^1 = \frac12(e-1)$$
+Omdat de grenzen al zijn omgerekend naar $u$-waarden, hoef je aan het eind niet meer terug te substitueren.
 """,
         "summary": "Substitutie herkent een binnenfunctie-afgeleide-patroon in de integrand. Kies $u$, herschrijf $dx$ via $du$, integreer naar $u$, en substitueer terug (of reken de grenzen om bij een bepaalde integraal).",
         "exercises": [
@@ -895,20 +1111,42 @@ $$\int \frac{x\,dx}{\sqrt{x^2+9}} = \frac12\int u^{-1/2}\,du = \frac12\cdot 2u^{
         "chapter_number": 11,
         "title": "Toepassingen van integralen: oppervlakte, inhoud, booglengte",
         "theory_content": r"""
-**Oppervlakte tussen twee grafieken.** Als $f(x) \ge g(x)$ op $[a,b]$:
+### Wat je al weet
+
+Uit hoofdstuk 9 ken je de bepaalde integraal als limiet van een Riemannsom: een oneindig fijne opdeling van een gebied in dunne stroken, waarvan je de bijdrages optelt. Dat "dun opdelen en optellen"-recept is toepasbaar op veel meer dan alleen oppervlakte onder één grafiek. Bij elke toepassing hieronder is de aanpak steeds hetzelfde: bedenk hoe één oneindig dun plakje eruitziet, schrijf de bijdrage van dat plakje op, en integreer.
+
+### Oppervlakte tussen twee grafieken
+
+Stel $f(x) \ge g(x)$ op $[a,b]$. Een dun verticaal reepje op positie $x$, met breedte $dx$, heeft als hoogte het verschil $f(x)-g(x)$ (de afstand tussen de twee grafieken op die plek), dus oppervlakte $\big(f(x)-g(x)\big)\,dx$. Tel al die reepjes op via een integraal:
 $$A = \int_a^b \big(f(x)-g(x)\big)\,dx$$
 
-**Inhoud van omwentelingslichamen (schijvenmethode).** Als het gebied onder $y=f(x)$ op $[a,b]$ om de $x$-as wentelt:
+### Inhoud van omwentelingslichamen: de schijvenmethode
+
+Laat het gebied onder $y=f(x)$ op $[a,b]$ ronddraaien om de $x$-as. Er ontstaat een 3D-lichaam. Snijd dat lichaam in oneindig dunne plakjes loodrecht op de $x$-as: elk plakje is bij benadering een cirkelvormige **schijf** met straal $f(x)$ en dikte $dx$, dus inhoud $\pi[f(x)]^2\,dx$ (de bekende cirkeloppervlakte $\pi r^2$, maal de dikte). Tel alle schijfjes op:
 $$V = \pi\int_a^b [f(x)]^2\,dx$$
 
-**Inhoud (schillenmethode).** Als het gebied tussen $y=f(x)$ en de $y$-as (op $[a,b]$, $a\ge0$) om de $y$-as wentelt:
+### Inhoud: de schillenmethode
+
+Soms is het handiger om het lichaam op te delen in dunne, holle **cilinderschillen** in plaats van platte schijven, bijvoorbeeld als je om de $y$-as wentelt. Een schil op positie $x$ heeft straal $x$, hoogte $f(x)$, en dikte $dx$. Rol je die schil "plat", dan krijg je een dun rechthoekig plakje met oppervlakte (omtrek $\times$ hoogte) $= 2\pi x \cdot f(x)$, dus inhoud $2\pi x f(x)\,dx$. Tel alle schillen op:
 $$V = 2\pi\int_a^b x\,f(x)\,dx$$
 
-**Booglengte.** De lengte van de grafiek van $y=f(x)$ van $x=a$ tot $x=b$:
+### Booglengte
+
+Om de lengte van de grafiek van $y=f(x)$ te meten, bekijk je een oneindig klein stukje van de kromme tussen $x$ en $x+dx$. Over zo'n microscopisch klein stukje is de kromme praktisch recht, een piepklein rechthoekig driehoekje met basis $dx$ en hoogte $f'(x)\,dx$ (de verticale toename, via de helling). De schuine zijde (de kromme zelf) volgt dan uit Pythagoras:
+$$\sqrt{(dx)^2 + (f'(x)\,dx)^2} = \sqrt{1+[f'(x)]^2}\;dx$$
+Tel al die piepkleine schuine stukjes op:
 $$L = \int_a^b \sqrt{1+[f'(x)]^2}\,dx$$
 
-**Voorbeeld (schijvenmethode).** Het gebied onder $y=\sqrt{x}$, $0\le x\le4$, wentelt om de $x$-as.
-$$V = \pi\int_0^4 (\sqrt{x})^2\,dx = \pi\int_0^4 x\,dx = \pi\left[\frac{x^2}{2}\right]_0^4 = \pi\cdot 8 = 8\pi$$
+### Een volledig uitgewerkt voorbeeld (schijvenmethode)
+
+**Het gebied onder $y=\sqrt{x}$, $0\le x\le4$, wentelt om de $x$-as. Bereken de inhoud.**
+
+**Stap 1.** Herken de situatie: wentelen om de $x$-as van het gebied onder één grafiek, dus de schijvenmethode met $f(x)=\sqrt{x}$.
+
+**Stap 2.** Stel de integraal op: $[f(x)]^2 = (\sqrt{x})^2 = x$.
+$$V = \pi\int_0^4 x\,dx$$
+
+**Stap 3.** Bereken de integraal: $\pi\left[\frac{x^2}{2}\right]_0^4 = \pi\cdot 8 = 8\pi$.
 """,
         "summary": "Vlakke oppervlaktes tussen grafieken, inhoud via schijven- of schillenmethode, en booglengte zijn alle drie directe toepassingen van de bepaalde integraal: stel de juiste integrand op (op basis van een dun plakje/schijfje/schilletje) en integreer.",
         "exercises": [
