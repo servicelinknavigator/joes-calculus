@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}H{{ chapter.chapter_number }} {{ chapter.title }}{% endblock %}
+{% block content %}
+
+<div class="chapter-nav-top">
+  <span class="chapter-eyebrow">Hoofdstuk {{ chapter.chapter_number }}</span>
+  <h1>{{ chapter.title }}</h1>
+</div>
+
+{% if placeholder %}
+<div class="placeholder-box">
+  <p>Dit hoofdstuk is nog niet ingevuld. Binnenkort beschikbaar.</p>
+</div>
+{% else %}
+
+<section class="theory-block">
+  <h2>Uitleg vooraf</h2>
+  <div class="theory-content">{{ theory_html | safe }}</div>
+</section>
+
+<section class="exercises-block">
+  <h2>Opgaven</h2>
+  {% for ex in exercises %}
+  <div class="exercise-card" data-exercise-id="{{ ex.id }}">
+    <div class="exercise-head">
+      <span class="exercise-num">Opgave {{ loop.index }}</span>
+      <span class="difficulty diff-{{ ex.difficulty }}">{{ '●' * ex.difficulty }}{{ '○' * (3 - ex.difficulty) }}</span>
+    </div>
+    <div class="exercise-question">{{ ex.question_html | safe }}</div>
+
+    {% if ex.answer_type in ('numeric', 'expression') %}
+    <div class="answer-row">
+      <input type="text" class="answer-input" placeholder="Jouw antwoord">
+      <button type="button" class="btn-check" onclick="checkAnswer({{ ex.id }})">Controleer</button>
+      <span class="check-result"></span>
+    </div>
+    {% endif %}
+
+    <div class="hints-block">
+      <button type="button" class="btn-hint" onclick="revealHint({{ ex.id }})">Hint tijdens het maken</button>
+      <div class="hints-list" id="hints-{{ ex.id }}" data-hints='{{ ex.hints | tojson }}' data-shown="0"></div>
+    </div>
+
+    <details class="solution-block">
+      <summary>Volledige uitwerking achteraf</summary>
+      <div class="solution-content">{{ ex.full_solution_html | safe }}</div>
+    </details>
+  </div>
+  {% endfor %}
+</section>
+
+{% if summary_html %}
+<section class="summary-block">
+  <h2>Samenvatting</h2>
+  <div>{{ summary_html | safe }}</div>
+</section>
+{% endif %}
+
+<form method="post" action="{{ url_for('chapter_complete', chapter_number=chapter.chapter_number) }}" class="complete-form">
+  <button type="submit">Markeer hoofdstuk als voltooid</button>
+</form>
+
+{% endif %}
+
+<script>
+function revealHint(exerciseId) {
+  const el = document.getElementById('hints-' + exerciseId);
+  const hints = JSON.parse(el.dataset.hints);
+  let shown = parseInt(el.dataset.shown, 10);
+  if (shown >= hints.length) return;
+  const p = document.createElement('p');
+  p.className = 'hint-item';
+  p.textContent = 'Hint ' + (shown + 1) + ': ' + hints[shown];
+  el.appendChild(p);
+  shown += 1;
+  el.dataset.shown = shown;
+  if (window.renderMathInElement) {
+    renderMathInElement(p, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+  }
+}
+
+async function checkAnswer(exerciseId) {
+  const card = document.querySelector('.exercise-card[data-exercise-id="' + exerciseId + '"]');
+  const input = card.querySelector('.answer-input');
+  const resultEl = card.querySelector('.check-result');
+  resultEl.textContent = '...';
+  try {
+    const res = await fetch('/exercise/' + exerciseId + '/check', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({answer: input.value})
+    });
+    const data = await res.json();
+    if (data.is_correct === true) {
+      resultEl.textContent = '✓ Correct';
+      resultEl.className = 'check-result ok';
+    } else if (data.is_correct === false) {
+      resultEl.textContent = '✗ Nog niet goed, probeer een hint of bekijk de uitwerking';
+      resultEl.className = 'check-result bad';
+    } else {
+      resultEl.textContent = 'Antwoord opgeslagen, controleer met de uitwerking';
+      resultEl.className = 'check-result neutral';
+    }
+  } catch (e) {
+    resultEl.textContent = 'Kon niet controleren';
+  }
+}
+</script>
+{% endblock %}

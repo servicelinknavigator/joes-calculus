@@ -1,0 +1,128 @@
+-- Joes Calculus App — Supabase schema (v1.0)
+-- Voer dit uit in de Supabase SQL editor van een nieuw (of bestaand) project.
+
+-- ── profiles ─────────────────────────────────────────────────────────────────
+create table if not exists profiles (
+  id         uuid primary key references auth.users(id) on delete cascade,
+  email      text not null,
+  name       text,
+  role       text not null default 'student' check (role in ('admin', 'student')),
+  created_at timestamptz not null default now()
+);
+
+-- Automatisch profiel aanmaken zodra een auth-user wordt aangemaakt
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email, role)
+  values (
+    new.id,
+    new.email,
+    case when lower(new.email) = 'contact@slnsolutions.nl' then 'admin' else 'student' end
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- ── modules ──────────────────────────────────────────────────────────────────
+create table if not exists modules (
+  id          serial primary key,
+  order_index int not null,
+  title       text not null
+);
+
+-- ── chapters ─────────────────────────────────────────────────────────────────
+create table if not exists chapters (
+  id              serial primary key,
+  module_id       int not null references modules(id) on delete cascade,
+  chapter_number  int not null unique,     -- doorlopende nummering 1..47
+  title           text not null,
+  theory_content  text,                    -- markdown: de "vooraf"-uitleg
+  summary         text,                    -- optionele afsluitende samenvatting
+  is_placeholder  boolean not null default false  -- true = "binnenkort beschikbaar"
+);
+
+-- ── exercises ────────────────────────────────────────────────────────────────
+create table if not exists exercises (
+  id              serial primary key,
+  chapter_id      int not null references chapters(id) on delete cascade,
+  order_index     int not null,
+  difficulty      int not null default 1 check (difficulty between 1 and 3),
+  question        text not null,           -- opgavetekst (markdown/LaTeX)
+  hints           jsonb not null default '[]'::jsonb,  -- progressieve hints ("tijdens")
+  full_solution   text not null,           -- volledige uitwerking met toelichting ("achteraf")
+  answer_type     text not null default 'open' check (answer_type in ('numeric', 'expression', 'open')),
+  correct_answer  text                     -- indien automatisch controleerbaar
+);
+
+-- ── progress ─────────────────────────────────────────────────────────────────
+create table if not exists progress (
+  id          serial primary key,
+  user_id     uuid not null references profiles(id) on delete cascade,
+  chapter_id  int not null references chapters(id) on delete cascade,
+  status      text not null default 'not_started' check (status in ('not_started', 'in_progress', 'completed')),
+  updated_at  timestamptz not null default now(),
+  unique (user_id, chapter_id)
+);
+
+-- ── exercise_attempts ────────────────────────────────────────────────────────
+create table if not exists exercise_attempts (
+  id               serial primary key,
+  user_id          uuid not null references profiles(id) on delete cascade,
+  exercise_id      int not null references exercises(id) on delete cascade,
+  submitted_answer text,
+  is_correct       boolean,
+  hints_used       int not null default 0,
+  created_at       timestamptz not null default now()
+);
+
+-- ── RLS ──────────────────────────────────────────────────────────────────────
+alter table profiles           enable row level security;
+alter table modules            enable row level security;
+alter table chapters           enable row level security;
+alter table exercises          enable row level security;
+alter table progress           enable row level security;
+alter table exercise_attempts  enable row level security;
+
+-- profiles: iedereen mag het eigen profiel lezen/updaten, admin mag alles lezen
+create policy "profiles select own or admin" on profiles for select
+  using (auth.uid() = id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
+create policy "profiles update own" on profiles for update
+  using (auth.uid() = id);
+
+-- modules/chapters/exercises: leesbaar voor elke ingelogde gebruiker (geen prive content)
+create policy "modules select authenticated" on modules for select
+  using (auth.role() = 'authenticated');
+create policy "chapters select authenticated" on chapters for select
+  using (auth.role() = 'authenticated');
+create policy "exercises select authenticated" on exercises for select
+  using (auth.role() = 'authenticated');
+
+-- progress: eigen rijen, admin ziet alles
+create policy "progress select own or admin" on progress for select
+  using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
+create policy "progress upsert own" on progress for insert
+  with check (auth.uid() = user_id);
+create policy "progress update own" on progress for update
+  using (auth.uid() = user_id);
+
+-- exercise_attempts: eigen rijen, admin ziet alles
+create policy "attempts select own or admin" on exercise_attempts for select
+  using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
+create policy "attempts insert own" on exercise_attempts for insert
+  with check (auth.uid() = user_id);
+
+-- ── seed: modules ────────────────────────────────────────────────────────────
+insert into modules (id, order_index, title) values
+  (1, 1, 'Calculus 1'),
+  (2, 2, 'Calculus 2'),
+  (3, 3, 'Calculus 3'),
+  (4, 4, 'Lineaire algebra'),
+  (5, 5, 'Differentiaalvergelijkingen')
+on conflict (id) do nothing;

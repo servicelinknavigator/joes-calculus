@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Calculus{% endblock %} | Joes</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ]
+        });"></script>
+</head>
+<body>
+{% if current_user %}
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="{{ url_for('dashboard') }}" class="brand">📘 Calculus</a>
+    </div>
+    <nav class="toc">
+      {% for m in modules %}
+      <div class="toc-module">
+        <div class="toc-module-title">{{ m.order_index }}. {{ m.title }}</div>
+        <ul>
+          {% for c in m.chapters %}
+          {% set st = progress.get(c.id, 'not_started') %}
+          <li class="{{ 'active' if chapter and chapter.chapter_number == c.chapter_number else '' }}">
+            <a href="{{ url_for('chapter_view', chapter_number=c.chapter_number) }}" class="{{ 'placeholder-link' if c.is_placeholder else '' }}">
+              <span class="chnum">H{{ c.chapter_number }}</span>
+              <span class="chtitle">{{ c.title }}</span>
+              {% if not c.is_placeholder %}
+                {% if st == 'completed' %}<span class="badge badge-done">✓</span>
+                {% elif st == 'in_progress' %}<span class="badge badge-progress">•</span>
+                {% endif %}
+              {% endif %}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </nav>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-user">Ingelogd als {{ current_user.email }}</div>
+      <a href="{{ url_for('logout') }}" class="logout-link">Uitloggen</a>
+    </header>
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+  {% block content_noauth %}{% endblock %}
+{% endif %}
+</body>
+</html>
