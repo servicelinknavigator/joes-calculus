@@ -260,6 +260,13 @@ def inject_user():
     }
 
 
+@app.route("/health")
+def health():
+    """Lichte endpoint voor uptime-monitoring (bv. UptimeRobot), geen DB-calls
+    zodat pings de app wakker houden zonder onnodige Supabase-belasting."""
+    return "OK", 200
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
