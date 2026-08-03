@@ -25,6 +25,8 @@ if hasattr(sys.stdout, "reconfigure"):
 
 load_dotenv(override=True)
 
+from chapters_module2 import CHAPTERS_2  # noqa: E402
+
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_SERVICE_KEY = os.environ["SUPABASE_SERVICE_KEY"]
 HEADERS = {
@@ -34,18 +36,9 @@ HEADERS = {
 }
 
 
-# ── Placeholder-titels voor hoofdstuk 12-47 (module_id, chapter_number, title) ──
+# ── Placeholder-titels voor hoofdstuk 22-47 (module_id, chapter_number, title) ──
+# (hoofdstuk 12-21 staan volledig uitgewerkt in chapters_module2.py)
 PLACEHOLDER_CHAPTERS = [
-    (2, 12, "Partieel integreren"),
-    (2, 13, "Partieelbreuksplitsing"),
-    (2, 14, "Goniometrische substitutie"),
-    (2, 15, "Oneigenlijke integralen"),
-    (2, 16, "Rijen en reeksen: convergentie"),
-    (2, 17, "Convergentiecriteria"),
-    (2, 18, "Machtreeksen"),
-    (2, 19, "Taylor- en Maclaurinreeksen"),
-    (2, 20, "Parametrische krommen"),
-    (2, 21, "Poolcoördinaten"),
     (3, 22, "Vectoren in de ruimte, in-/uitproduct, lijnen en vlakken in 3D"),
     (3, 23, "Vectorwaardige functies en ruimtekrommen"),
     (3, 24, "Functies van meerdere variabelen, partiële afgeleiden"),
@@ -1256,9 +1249,12 @@ def replace_exercises(chapter_id, exercises):
     r.raise_for_status()
 
 
+ALL_CHAPTERS = CHAPTERS + CHAPTERS_2
+
+
 def main():
-    print("Seeding volledige hoofdstukken (Module I)...")
-    for ch in CHAPTERS:
+    print("Seeding volledige hoofdstukken...")
+    for ch in ALL_CHAPTERS:
         chapter_id = upsert_chapter(
             ch["module_id"], ch["chapter_number"], ch["title"],
             theory_content=ch["theory_content"], summary=ch["summary"], is_placeholder=False,
@@ -1266,7 +1262,7 @@ def main():
         replace_exercises(chapter_id, ch["exercises"])
         print(f"  H{ch['chapter_number']:>2} {ch['title'][:60]} | {len(ch['exercises'])} opgaven")
 
-    print("Seeding placeholder-hoofdstukken (Module II-V)...")
+    print("Seeding placeholder-hoofdstukken (Module III-V)...")
     for module_id, chapter_number, title in PLACEHOLDER_CHAPTERS:
         upsert_chapter(module_id, chapter_number, title, is_placeholder=True)
         print(f"  H{chapter_number:>2} {title[:60]} (placeholder)")
