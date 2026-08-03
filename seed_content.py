@@ -26,6 +26,7 @@ if hasattr(sys.stdout, "reconfigure"):
 load_dotenv(override=True)
 
 from chapters_module2 import CHAPTERS_2  # noqa: E402
+from chapters_module3 import CHAPTERS_3  # noqa: E402
 
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_SERVICE_KEY = os.environ["SUPABASE_SERVICE_KEY"]
@@ -36,18 +37,9 @@ HEADERS = {
 }
 
 
-# ── Placeholder-titels voor hoofdstuk 22-47 (module_id, chapter_number, title) ──
-# (hoofdstuk 12-21 staan volledig uitgewerkt in chapters_module2.py)
+# ── Placeholder-titels voor hoofdstuk 31-47 (module_id, chapter_number, title) ──
+# (hoofdstuk 12-21 staan in chapters_module2.py, hoofdstuk 22-30 in chapters_module3.py)
 PLACEHOLDER_CHAPTERS = [
-    (3, 22, "Vectoren in de ruimte, in-/uitproduct, lijnen en vlakken in 3D"),
-    (3, 23, "Vectorwaardige functies en ruimtekrommen"),
-    (3, 24, "Functies van meerdere variabelen, partiële afgeleiden"),
-    (3, 25, "Gradiënt en richtingsafgeleide"),
-    (3, 26, "Dubbele integralen"),
-    (3, 27, "Drievoudige integralen, cilinder- en bolcoördinaten"),
-    (3, 28, "Vectorvelden en lijnintegralen"),
-    (3, 29, "Stelling van Green"),
-    (3, 30, "Divergentie, rotatie, stellingen van Stokes en Gauss"),
     (4, 31, "Vectoren en vectorruimten"),
     (4, 32, "Matrices en bewerkingen"),
     (4, 33, "Stelsels lineaire vergelijkingen, Gauss-eliminatie"),
@@ -1249,7 +1241,7 @@ def replace_exercises(chapter_id, exercises):
     r.raise_for_status()
 
 
-ALL_CHAPTERS = CHAPTERS + CHAPTERS_2
+ALL_CHAPTERS = CHAPTERS + CHAPTERS_2 + CHAPTERS_3
 
 
 def main():
