@@ -28,14 +28,6 @@
     </div>
     <div class="exercise-question">{{ ex.question_html | safe }}</div>
 
-    {% if ex.answer_type in ('numeric', 'expression') %}
-    <div class="answer-row">
-      <input type="text" class="answer-input" placeholder="Jouw antwoord">
-      <button type="button" class="btn-check" onclick="checkAnswer({{ ex.id }})">Controleer</button>
-      <span class="check-result"></span>
-    </div>
-    {% endif %}
-
     <div class="hints-block">
       <button type="button" class="btn-hint" onclick="revealHint({{ ex.id }})">Hint tijdens het maken</button>
       <div class="hints-list" id="hints-{{ ex.id }}" data-hints='{{ ex.hints | tojson }}' data-shown="0"></div>
@@ -45,6 +37,25 @@
       <summary>Volledige uitwerking achteraf</summary>
       <div class="solution-content">{{ ex.full_solution_html | safe }}</div>
     </details>
+
+    <div class="result-block">
+      <div class="result-row">
+        <span class="result-label">Werk je opgave op papier uit. Hoe ging het?</span>
+        <div class="report-buttons">
+          <button type="button" class="btn-report btn-report-good" onclick="reportResult({{ ex.id }}, true, this)">✓ Ik had dit goed</button>
+          <button type="button" class="btn-report btn-report-bad" onclick="reportResult({{ ex.id }}, false, this)">✗ Ik had dit fout</button>
+        </div>
+      </div>
+
+      <div class="upload-row">
+        <span class="result-label">Of upload een foto van je uitwerking, dan kijk ik hem na</span>
+        <div class="upload-controls">
+          <input type="file" accept="image/*" class="upload-input" id="upload-{{ ex.id }}">
+          <button type="button" class="btn-upload" onclick="uploadSolution({{ ex.id }})">Laat nakijken</button>
+        </div>
+        <div class="upload-feedback" id="upload-feedback-{{ ex.id }}"></div>
+      </div>
+    </div>
   </div>
   {% endfor %}
 </section>
@@ -79,30 +90,60 @@ function revealHint(exerciseId) {
   }
 }
 
-async function checkAnswer(exerciseId) {
+async function reportResult(exerciseId, wasCorrect, btn) {
   const card = document.querySelector('.exercise-card[data-exercise-id="' + exerciseId + '"]');
-  const input = card.querySelector('.answer-input');
-  const resultEl = card.querySelector('.check-result');
-  resultEl.textContent = '...';
+  const goodBtn = card.querySelector('.btn-report-good');
+  const badBtn = card.querySelector('.btn-report-bad');
+  goodBtn.classList.remove('active');
+  badBtn.classList.remove('active');
+  btn.classList.add('active');
   try {
-    const res = await fetch('/exercise/' + exerciseId + '/check', {
+    await fetch('/exercise/' + exerciseId + '/self_report', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({answer: input.value})
+      body: JSON.stringify({correct: wasCorrect})
+    });
+  } catch (e) {
+    // stilzwijgend negeren, de knopstatus is al bijgewerkt
+  }
+}
+
+async function uploadSolution(exerciseId) {
+  const fileInput = document.getElementById('upload-' + exerciseId);
+  const feedbackEl = document.getElementById('upload-feedback-' + exerciseId);
+  if (!fileInput.files || !fileInput.files[0]) {
+    feedbackEl.textContent = 'Kies eerst een foto.';
+    feedbackEl.className = 'upload-feedback bad';
+    return;
+  }
+  feedbackEl.textContent = 'Bezig met nakijken...';
+  feedbackEl.className = 'upload-feedback neutral';
+
+  const formData = new FormData();
+  formData.append('image', fileInput.files[0]);
+
+  try {
+    const res = await fetch('/exercise/' + exerciseId + '/upload', {
+      method: 'POST',
+      body: formData
     });
     const data = await res.json();
-    if (data.is_correct === true) {
-      resultEl.textContent = '✓ Correct';
-      resultEl.className = 'check-result ok';
-    } else if (data.is_correct === false) {
-      resultEl.textContent = '✗ Nog niet goed, probeer een hint of bekijk de uitwerking';
-      resultEl.className = 'check-result bad';
-    } else {
-      resultEl.textContent = 'Antwoord opgeslagen, controleer met de uitwerking';
-      resultEl.className = 'check-result neutral';
+    if (!res.ok) {
+      feedbackEl.textContent = data.error || 'Nakijken mislukt, probeer opnieuw.';
+      feedbackEl.className = 'upload-feedback bad';
+      return;
+    }
+    const verdictLabel = data.verdict === 'correct' ? '✓ Goed'
+      : data.verdict === 'incorrect' ? '✗ Nog niet goed'
+      : 'Niet helemaal duidelijk';
+    feedbackEl.innerHTML = '<strong>' + verdictLabel + '</strong><br>' + data.feedback;
+    feedbackEl.className = 'upload-feedback ' + (data.verdict === 'correct' ? 'ok' : data.verdict === 'incorrect' ? 'bad' : 'neutral');
+    if (window.renderMathInElement) {
+      renderMathInElement(feedbackEl, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
     }
   } catch (e) {
-    resultEl.textContent = 'Kon niet controleren';
+    feedbackEl.textContent = 'Nakijken mislukt, probeer opnieuw.';
+    feedbackEl.className = 'upload-feedback bad';
   }
 }
 </script>

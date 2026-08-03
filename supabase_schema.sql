@@ -82,13 +82,26 @@ create table if not exists exercise_attempts (
   created_at       timestamptz not null default now()
 );
 
+-- ── exercise_submissions ─────────────────────────────────────────────────────
+-- Foto-uploads van uitwerkingen op papier, nagekeken door de AI (zie /exercise/<id>/upload)
+create table if not exists exercise_submissions (
+  id           serial primary key,
+  user_id      uuid not null references profiles(id) on delete cascade,
+  exercise_id  int not null references exercises(id) on delete cascade,
+  image_path   text,                 -- pad in de "solution-uploads" Storage-bucket
+  ai_verdict   text,                 -- 'correct' | 'incorrect' | 'unclear'
+  ai_feedback  text,
+  created_at   timestamptz not null default now()
+);
+
 -- ── RLS ──────────────────────────────────────────────────────────────────────
-alter table profiles           enable row level security;
-alter table modules            enable row level security;
-alter table chapters           enable row level security;
-alter table exercises          enable row level security;
-alter table progress           enable row level security;
-alter table exercise_attempts  enable row level security;
+alter table profiles              enable row level security;
+alter table modules               enable row level security;
+alter table chapters              enable row level security;
+alter table exercises             enable row level security;
+alter table progress              enable row level security;
+alter table exercise_attempts     enable row level security;
+alter table exercise_submissions  enable row level security;
 
 -- profiles: iedereen mag het eigen profiel lezen/updaten, admin mag alles lezen
 create policy "profiles select own or admin" on profiles for select
@@ -116,6 +129,12 @@ create policy "progress update own" on progress for update
 create policy "attempts select own or admin" on exercise_attempts for select
   using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
 create policy "attempts insert own" on exercise_attempts for insert
+  with check (auth.uid() = user_id);
+
+-- exercise_submissions: eigen rijen, admin ziet alles
+create policy "submissions select own or admin" on exercise_submissions for select
+  using (auth.uid() = user_id or exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin'));
+create policy "submissions insert own" on exercise_submissions for insert
   with check (auth.uid() = user_id);
 
 -- ── seed: modules ────────────────────────────────────────────────────────────

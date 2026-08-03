@@ -198,10 +198,7 @@ body {
 .difficulty { color: var(--red); letter-spacing: 2px; font-size: 0.8rem; }
 .exercise-question { line-height: 1.75; margin-bottom: 6px; }
 
-.answer-row { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
-.answer-input { flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; }
-.answer-input:focus { outline: none; border-color: var(--black); }
-.btn-check, .btn-hint {
+.btn-hint {
   padding: 8px 14px;
   border: 1px solid var(--black);
   background: #fff;
@@ -211,11 +208,7 @@ body {
   font-size: 0.85rem;
   font-weight: 600;
 }
-.btn-check:hover, .btn-hint:hover { background: var(--black); color: #fff; }
-.check-result { font-size: 0.85rem; font-weight: 600; }
-.check-result.ok { color: var(--ink); }
-.check-result.bad { color: var(--red); }
-.check-result.neutral { color: var(--ink-soft); }
+.btn-hint:hover { background: var(--black); color: #fff; }
 
 .hints-block { margin: 12px 0 4px; }
 .hints-list { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
@@ -225,6 +218,42 @@ body {
 .solution-block summary { cursor: pointer; font-size: 0.86rem; color: var(--black); font-weight: 700; }
 .solution-block summary:hover { color: var(--red); }
 .solution-content { margin-top: 10px; font-size: 0.92rem; }
+
+/* ── Zelfbeoordeling + upload ── */
+.result-block { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 14px; display: flex; flex-direction: column; gap: 12px; }
+.result-row, .upload-row { display: flex; flex-direction: column; gap: 8px; }
+.result-label { font-size: 0.82rem; color: var(--ink-soft); }
+.report-buttons { display: flex; gap: 8px; }
+.btn-report {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.btn-report-good:hover, .btn-report-good.active { border-color: var(--black); background: var(--black); color: #fff; }
+.btn-report-bad:hover, .btn-report-bad.active { border-color: var(--red); background: var(--red); color: #fff; }
+
+.upload-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.upload-input { font-size: 0.82rem; max-width: 220px; }
+.btn-upload {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.btn-upload:hover { border-color: var(--black); }
+.upload-feedback { font-size: 0.85rem; line-height: 1.6; }
+.upload-feedback.ok { color: var(--ink); }
+.upload-feedback.bad { color: var(--red); }
+.upload-feedback.neutral { color: var(--ink-soft); }
 
 .complete-form { margin-top: 24px; }
 .complete-form button {

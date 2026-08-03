@@ -1,17 +1,15 @@
 import os
 import re
 import logging
+import base64
+from uuid import uuid4
 from datetime import timedelta
 
 import markdown as md_lib
 import requests as http
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort
 from dotenv import load_dotenv
-from sympy import simplify
-from sympy.parsing.sympy_parser import (
-    parse_expr, standard_transformations,
-    implicit_multiplication_application, convert_xor,
-)
+from anthropic import Anthropic
 
 load_dotenv(override=True)
 
@@ -19,13 +17,17 @@ app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
 app.permanent_session_lifetime = timedelta(days=30)
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10MB, ruim genoeg voor een foto
 
 SUPABASE_URL         = os.environ.get("SUPABASE_URL", "")
 SUPABASE_ANON_KEY     = os.environ.get("SUPABASE_ANON_KEY", "")
 SUPABASE_SERVICE_KEY  = os.environ.get("SUPABASE_SERVICE_KEY", "")
 ADMIN_EMAIL           = os.environ.get("ADMIN_EMAIL", "contact@slnsolutions.nl").lower()
+ANTHROPIC_API_KEY     = os.environ.get("ANTHROPIC_API_KEY", "")
+STORAGE_BUCKET        = "solution-uploads"
 
 SB_SVC = {"Authorization": f"Bearer {SUPABASE_SERVICE_KEY}", "apikey": SUPABASE_SERVICE_KEY}
+_anthropic_client = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
 
 
 # ── Supabase REST helpers (backend gebruikt altijd de service key; autorisatie
@@ -56,45 +58,47 @@ def md(text):
     return md_lib.markdown(text or "", extensions=["extra"])
 
 
-# ── Wiskundige antwoordcontrole ──────────────────────────────────────────────
-# Vergelijkt antwoorden symbolisch (via sympy) in plaats van als kale tekst, zodat
-# "3x^2 * sin(x) + x^3 * cos(x)" en "3x^2sin(x)+x^3cos(x)" als gelijk herkend worden.
+# ── AI-nakijken van geüploade foto's ─────────────────────────────────────────
 
-_MATH_TRANSFORMS = standard_transformations + (implicit_multiplication_application, convert_xor)
-_FUNC_NAMES = ("sin", "cos", "tan", "sqrt", "exp", "ln", "log")
-_MULT_BEFORE_FUNC = re.compile(r"(?<=[0-9A-Za-z\)])(?=(?:" + "|".join(_FUNC_NAMES) + r")\()")
-_TRIG_POWER = re.compile(r"(sin|cos|tan)\^(\d+)\(([^)]*)\)")
-_DECIMAL_COMMA = re.compile(r"(\d),(\d)")
+_VERDICT_RE = re.compile(r"VERDICT:\s*(correct|incorrect|unclear)", re.IGNORECASE)
+_FEEDBACK_RE = re.compile(r"FEEDBACK:\s*(.*)", re.IGNORECASE | re.DOTALL)
 
 
-def _prepare_expr(s):
-    s = s.strip()
-    s = _DECIMAL_COMMA.sub(r"\1.\2", s)          # 3,75 -> 3.75
-    s = _TRIG_POWER.sub(r"(\1(\3))^\2", s)        # sin^4(x) -> (sin(x))^4
-    s = _MULT_BEFORE_FUNC.sub("*", s)             # 6xcos(..) -> 6x*cos(..)
-    return s
+def review_solution_image(question, full_solution, image_bytes, mime_type):
+    if not _anthropic_client:
+        return "unclear", "De AI-nakijkfunctie is nog niet geconfigureerd (ANTHROPIC_API_KEY ontbreekt op de server)."
 
+    b64 = base64.b64encode(image_bytes).decode("utf-8")
+    prompt = f"""Je bent een geduldige wiskundedocent die een foto van een met de hand geschreven uitwerking nakijkt.
 
-def _parse_math(s):
-    return parse_expr(_prepare_expr(s), transformations=_MATH_TRANSFORMS)
+Opgave:
+{question}
 
+Correcte uitwerking (referentie voor jou, dit is niet per se de enige juiste aanpak):
+{full_solution}
 
-def answers_match(submitted, correct):
-    """True als submitted en correct wiskundig gelijkwaardig zijn, met een simpele
-    tekstvergelijking als terugvaloptie wanneer sympy het antwoord niet kan parsen."""
-    try:
-        if "=" in submitted and "=" in correct:
-            sl, sr = submitted.split("=", 1)
-            cl, cr = correct.split("=", 1)
-            a = _parse_math(sl) - _parse_math(sr)
-            b = _parse_math(cl) - _parse_math(cr)
-            # een vergelijking blijft gelijk als je beide kanten omdraait (a = -b)
-            return bool(simplify(a - b) == 0) or bool(simplify(a + b) == 0)
-        diff = _parse_math(submitted) - _parse_math(correct)
-        return bool(simplify(diff) == 0)
-    except Exception:
-        norm = lambda s: re.sub(r"\s+", "", s.strip().lower())
-        return norm(submitted) == norm(correct)
+Beoordeel de uitwerking op de foto: is de redenering en het eindantwoord correct? Kleine notatiefouten mogen genegeerd worden als de wiskunde klopt. Antwoord in het Nederlands, exact in dit formaat, zonder extra tekst ervoor:
+VERDICT: correct of incorrect of unclear
+FEEDBACK: korte, vriendelijke uitleg (maximaal 4 zinnen) over wat goed ging en, als er iets misging, wat er precies misging en waarom."""
+
+    message = _anthropic_client.messages.create(
+        model="claude-sonnet-5",
+        max_tokens=500,
+        messages=[{
+            "role": "user",
+            "content": [
+                {"type": "image", "source": {"type": "base64", "media_type": mime_type, "data": b64}},
+                {"type": "text", "text": prompt},
+            ],
+        }],
+    )
+    text = "".join(block.text for block in message.content if block.type == "text")
+
+    verdict_match = _VERDICT_RE.search(text)
+    feedback_match = _FEEDBACK_RE.search(text)
+    verdict = verdict_match.group(1).lower() if verdict_match else "unclear"
+    feedback = feedback_match.group(1).strip() if feedback_match else text.strip()
+    return verdict, feedback
 
 
 # ── Auth ─────────────────────────────────────────────────────────────────────
@@ -274,30 +278,77 @@ def chapter_complete(chapter_number):
     return redirect(url_for("chapter_view", chapter_number=chapter_number))
 
 
-@app.route("/exercise/<int:exercise_id>/check", methods=["POST"])
-def exercise_check(exercise_id):
+@app.route("/exercise/<int:exercise_id>/self_report", methods=["POST"])
+def exercise_self_report(exercise_id):
     guard = require_login()
     if guard:
         return jsonify({"error": "not_logged_in"}), 401
 
-    rows = sb_get("exercises", {"id": f"eq.{exercise_id}", "select": "id,answer_type,correct_answer"})
+    is_correct = bool((request.json or {}).get("correct"))
+    sb_post("exercise_attempts", {
+        "user_id": session["user_id"],
+        "exercise_id": exercise_id,
+        "submitted_answer": "(zelf beoordeeld)",
+        "is_correct": is_correct,
+    }, prefer="return=minimal")
+    return jsonify({"ok": True})
+
+
+_ALLOWED_IMAGE_TYPES = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/heic": "heic"}
+
+
+@app.route("/exercise/<int:exercise_id>/upload", methods=["POST"])
+def exercise_upload(exercise_id):
+    guard = require_login()
+    if guard:
+        return jsonify({"error": "not_logged_in"}), 401
+
+    file = request.files.get("image")
+    if not file or not file.filename:
+        return jsonify({"error": "Geen bestand ontvangen"}), 400
+
+    mime_type = file.mimetype
+    if mime_type not in _ALLOWED_IMAGE_TYPES:
+        return jsonify({"error": "Alleen foto's (jpg, png, webp, heic) worden ondersteund"}), 400
+
+    image_bytes = file.read()
+    if not image_bytes:
+        return jsonify({"error": "Leeg bestand"}), 400
+
+    rows = sb_get("exercises", {"id": f"eq.{exercise_id}", "select": "id,question,full_solution"})
     if not rows:
         abort(404)
     exercise = rows[0]
 
-    submitted = (request.json or {}).get("answer", "").strip()
-    is_correct = None
-    if exercise["answer_type"] in ("numeric", "expression") and exercise.get("correct_answer") and submitted:
-        is_correct = answers_match(submitted, exercise["correct_answer"])
+    verdict, feedback = review_solution_image(exercise["question"], exercise["full_solution"], image_bytes, mime_type)
+
+    ext = _ALLOWED_IMAGE_TYPES[mime_type]
+    storage_path = f"{session['user_id']}/{exercise_id}/{uuid4().hex}.{ext}"
+    upload_resp = http.post(
+        f"{SUPABASE_URL}/storage/v1/object/{STORAGE_BUCKET}/{storage_path}",
+        headers={**SB_SVC, "Content-Type": mime_type},
+        data=image_bytes, timeout=20,
+    )
+    image_path = storage_path if upload_resp.status_code in (200, 201) else None
+    if image_path is None:
+        app.logger.warning("Storage upload mislukt: %s %s", upload_resp.status_code, upload_resp.text[:200])
+
+    sb_post("exercise_submissions", {
+        "user_id": session["user_id"],
+        "exercise_id": exercise_id,
+        "image_path": image_path,
+        "ai_verdict": verdict,
+        "ai_feedback": feedback,
+    }, prefer="return=minimal")
 
     sb_post("exercise_attempts", {
         "user_id": session["user_id"],
         "exercise_id": exercise_id,
-        "submitted_answer": submitted,
-        "is_correct": is_correct,
+        "submitted_answer": "(foto-upload)",
+        "is_correct": verdict == "correct",
     }, prefer="return=minimal")
 
-    return jsonify({"is_correct": is_correct})
+    return jsonify({"verdict": verdict, "feedback": feedback})
 
 
 if __name__ == "__main__":
