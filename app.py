@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 from datetime import timedelta
 
@@ -6,6 +7,11 @@ import markdown as md_lib
 import requests as http
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort
 from dotenv import load_dotenv
+from sympy import simplify
+from sympy.parsing.sympy_parser import (
+    parse_expr, standard_transformations,
+    implicit_multiplication_application, convert_xor,
+)
 
 load_dotenv(override=True)
 
@@ -48,6 +54,47 @@ def sb_patch(path, payload, prefer="return=minimal"):
 
 def md(text):
     return md_lib.markdown(text or "", extensions=["extra"])
+
+
+# ── Wiskundige antwoordcontrole ──────────────────────────────────────────────
+# Vergelijkt antwoorden symbolisch (via sympy) in plaats van als kale tekst, zodat
+# "3x^2 * sin(x) + x^3 * cos(x)" en "3x^2sin(x)+x^3cos(x)" als gelijk herkend worden.
+
+_MATH_TRANSFORMS = standard_transformations + (implicit_multiplication_application, convert_xor)
+_FUNC_NAMES = ("sin", "cos", "tan", "sqrt", "exp", "ln", "log")
+_MULT_BEFORE_FUNC = re.compile(r"(?<=[0-9A-Za-z\)])(?=(?:" + "|".join(_FUNC_NAMES) + r")\()")
+_TRIG_POWER = re.compile(r"(sin|cos|tan)\^(\d+)\(([^)]*)\)")
+_DECIMAL_COMMA = re.compile(r"(\d),(\d)")
+
+
+def _prepare_expr(s):
+    s = s.strip()
+    s = _DECIMAL_COMMA.sub(r"\1.\2", s)          # 3,75 -> 3.75
+    s = _TRIG_POWER.sub(r"(\1(\3))^\2", s)        # sin^4(x) -> (sin(x))^4
+    s = _MULT_BEFORE_FUNC.sub("*", s)             # 6xcos(..) -> 6x*cos(..)
+    return s
+
+
+def _parse_math(s):
+    return parse_expr(_prepare_expr(s), transformations=_MATH_TRANSFORMS)
+
+
+def answers_match(submitted, correct):
+    """True als submitted en correct wiskundig gelijkwaardig zijn, met een simpele
+    tekstvergelijking als terugvaloptie wanneer sympy het antwoord niet kan parsen."""
+    try:
+        if "=" in submitted and "=" in correct:
+            sl, sr = submitted.split("=", 1)
+            cl, cr = correct.split("=", 1)
+            a = _parse_math(sl) - _parse_math(sr)
+            b = _parse_math(cl) - _parse_math(cr)
+            # een vergelijking blijft gelijk als je beide kanten omdraait (a = -b)
+            return bool(simplify(a - b) == 0) or bool(simplify(a + b) == 0)
+        diff = _parse_math(submitted) - _parse_math(correct)
+        return bool(simplify(diff) == 0)
+    except Exception:
+        norm = lambda s: re.sub(r"\s+", "", s.strip().lower())
+        return norm(submitted) == norm(correct)
 
 
 # ── Auth ─────────────────────────────────────────────────────────────────────
@@ -240,9 +287,8 @@ def exercise_check(exercise_id):
 
     submitted = (request.json or {}).get("answer", "").strip()
     is_correct = None
-    if exercise["answer_type"] in ("numeric", "expression") and exercise.get("correct_answer"):
-        norm = lambda s: s.strip().lower().replace(" ", "")
-        is_correct = norm(submitted) == norm(exercise["correct_answer"])
+    if exercise["answer_type"] in ("numeric", "expression") and exercise.get("correct_answer") and submitted:
+        is_correct = answers_match(submitted, exercise["correct_answer"])
 
     sb_post("exercise_attempts", {
         "user_id": session["user_id"],

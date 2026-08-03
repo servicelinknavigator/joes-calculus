@@ -406,7 +406,7 @@ $f'(x) = 2x\cdot e^{3x} + x^2 \cdot e^{3x}\cdot 3 = e^{3x}(2x+3x^2)$.
                 ],
                 "full_solution": r"""$$f'(x) = \cos(3x^2-1)\cdot 6x = 6x\cos(3x^2-1)$$""",
                 "answer_type": "expression",
-                "correct_answer": "6xcos(3x^2-1)",
+                "correct_answer": "6x*cos(3x^2-1)",
             },
             {
                 "order_index": 4, "difficulty": 3,
